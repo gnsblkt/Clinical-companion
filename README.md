@@ -1,4 +1,4 @@
-# Med Atlas Mate — Open-source PWA
+# Clinical Companion AI— Open-source PWA
 
 A responsive medical study workspace for clinical learning and postgraduate entrance exam revision. The project is MIT-licensed and its complete source is editable. It is an educational prototype, not a validated clinical decision-support system.
 
