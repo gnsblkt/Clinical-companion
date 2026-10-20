@@ -29,7 +29,7 @@ export default function App() {
  const [apiKey,setApiKey]=useState(()=>localStorage.getItem("clinical-ai-key")||"");
  const [model,setModel]=useState(()=>localStorage.getItem("clinical-ai-model")||"openai/gpt-oss-120b");
  const [threads,setThreads]=useState<ChatThread[]>(()=>{try{return JSON.parse(localStorage.getItem("clinical-ai-threads")||"[]")}catch{return[]}});
- const [activeThreadId,setActiveThreadId]=useState<string|null>(null);
+ const [activeThreadId,setActiveThreadId]=useState<string|null>(()=>{try{return JSON.parse(localStorage.getItem("clinical-ai-threads")||"[]")[0]?.id||null}catch{return null}});
  const [gems,setGems]=useState<Gem[]>(()=>{try{return JSON.parse(localStorage.getItem("clinical-ai-gems")||"[]")}catch{return[]}});
  const [gemEditor,setGemEditor]=useState(false); const [gemName,setGemName]=useState(""); const [gemPrompt,setGemPrompt]=useState(""); const [activeGem,setActiveGem]=useState<Gem|null>(null);
  const [importBusy,setImportBusy]=useState(false); const [importProgress,setImportProgress]=useState(0);
