@@ -40,7 +40,7 @@ npm run preview
 
 ## Publish with GitHub + Vercel
 
-1. Create a **public** GitHub repository named `med-atlas-mate` under your account.
+1. Create a **public** GitHub repository named `Clinical Companion` under your account.
 2. Upload the contents of this folder to the repository root (not the containing folder). Include hidden files such as `.github/workflows/ci.yml` and `.gitignore`.
 3. In Vercel, choose **Add New → Project**, import that GitHub repository and authorize access if prompted.
 4. Confirm the framework is **Vite**, build command is `npm run build`, and output directory is `dist`; deploy.
