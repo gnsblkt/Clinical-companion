@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from "react";
+import React, { useState, type FormEvent } from "react";
 import { Activity, ArrowLeft, BookOpen, ExternalLink, Image as ImageIcon, Search, ShieldCheck } from "lucide-react";
 
 type Article = { id: string; title: string; journal?: string; date?: string; url: string; abstract?: string };
