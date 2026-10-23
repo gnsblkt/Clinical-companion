@@ -326,3 +326,58 @@ body.practice-fullscreen-active{overflow:hidden}
 @media(prefers-reduced-motion:reduce){
  *,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
 }
+
+
+/* Responsive workspace refinements */
+.app-shell{grid-template-columns:248px minmax(0,1fr);width:100%;min-width:0}
+.main{min-width:0;max-width:none;width:100%;padding:clamp(18px,2.8vw,42px) clamp(16px,3vw,48px)}
+.panel,.practice-workspace,.chat-panel{min-width:0;max-width:100%}
+.practice-library-heading{align-items:center}
+.practice-library-actions{justify-content:flex-end}
+.practice-workspace:not(.is-fullscreen)>.practice{width:100%;max-width:100%;margin:0}
+.practice h2,.answer-explanation p,.markdown-answer{overflow-wrap:anywhere}
+.chat-panel{width:100%;max-width:none;margin:0}
+.chat-layout{width:100%;min-width:0;grid-template-columns:minmax(180px,230px) minmax(0,1fr);align-items:stretch}
+.chat-main{display:flex;flex-direction:column;min-width:0}
+.chat-transcript{min-width:0;width:100%;max-width:none}
+.chat-bubble{max-width:min(100%,1000px);font-size:15px;line-height:1.75}
+.markdown-answer{font-size:15px;line-height:1.8}
+.markdown-answer p{margin:10px 0}
+.markdown-answer li{margin:5px 0}
+.markdown-answer th,.markdown-answer td{padding:9px 11px}
+.chat-composer{width:100%;max-width:none}
+.chat-composer textarea{font-size:15px;min-height:52px}
+.chat-title>div{min-width:200px;flex:1}
+.chat-title button{flex-shrink:0}
+
+/* Edge-to-edge AI study chat. The fixed overlay escapes the narrow app column. */
+.chat-panel.chat-fullscreen{
+ position:fixed!important;inset:0!important;width:100vw!important;max-width:none!important;
+ height:100vh!important;height:100dvh!important;max-height:none!important;
+ margin:0!important;padding:clamp(12px,2vw,28px)!important;border:0!important;border-radius:0!important;
+ box-sizing:border-box!important;z-index:2147483001!important;background:#f5f7fb!important;
+ display:flex!important;flex-direction:column!important;overflow:hidden!important;gap:0!important;
+}
+.chat-fullscreen .chat-title{width:100%;max-width:none!important;flex:0 0 auto;margin:0 0 14px!important;padding:0 0 13px;border-bottom:1px solid #e0e7ef}
+.chat-fullscreen .chat-title>div{flex:1;min-width:180px}
+.chat-fullscreen .chat-title h2{font-size:clamp(20px,2vw,27px)}
+.chat-fullscreen .chat-layout{flex:1 1 auto!important;min-height:0!important;height:auto!important;width:100%!important;max-width:none!important;grid-template-columns:minmax(210px,clamp(220px,19vw,300px)) minmax(0,1fr)!important;gap:clamp(12px,1.5vw,24px)!important;overflow:hidden!important;margin:0!important}
+.chat-fullscreen .chat-history{max-height:none!important;height:100%!important;min-height:0!important;overflow:auto!important;padding:12px!important;border:1px solid #e0e7ef!important;border-radius:14px;background:#fff;order:initial!important}
+.chat-fullscreen .chat-main{height:100%!important;min-height:0!important;overflow:hidden!important;display:flex!important;flex-direction:column!important}
+.chat-fullscreen .chat-transcript{flex:1 1 auto!important;min-height:0!important;height:auto!important;max-height:none!important;width:100%!important;overflow:auto!important;padding:clamp(12px,2vw,28px)!important;border:1px solid #e0e7ef;border-radius:16px;background:#fff;gap:18px;overscroll-behavior:contain}
+.chat-fullscreen .chat-bubble{max-width:min(94%,1120px);padding:clamp(14px,1.5vw,22px);font-size:clamp(15px,1vw,17px);line-height:1.85}
+.chat-fullscreen .markdown-answer{font-size:clamp(15px,1vw,17px);line-height:1.9}
+.chat-fullscreen .markdown-answer table{font-size:14px}
+.chat-fullscreen .chat-composer{flex:0 0 auto;position:relative!important;bottom:auto!important;width:100%!important;max-width:none!important;margin:12px 0 0!important;padding:10px;background:#fff}
+.chat-fullscreen .chat-composer textarea{font-size:16px;max-height:22vh;min-height:58px}
+.chat-fullscreen .export-actions{flex:0 0 auto;margin:0!important;max-width:none!important;padding-top:10px}
+.chat-fullscreen .fine-print{flex:0 0 auto;margin:8px 0 0;font-size:11px}
+.chat-fullscreen.chat-history-hidden .chat-layout{grid-template-columns:minmax(0,1fr)!important}
+.chat-fullscreen.chat-history-hidden .chat-history{display:none!important}
+.chat-fullscreen.chat-history-hidden .chat-bubble{max-width:min(94%,1250px)}
+
+/* Practice questions use the available space, not the old narrow card width. */
+.practice-workspace.is-fullscreen .practice{max-width:1440px!important;width:100%!important}
+.practice-workspace.is-fullscreen .practice-library{display:none!important}
+.practice-workspace.is-fullscreen .practice h2{font-size:clamp(24px,2vw,34px)}
+.practice-workspace.is-fullscreen .answer-explanation p{font-size:clamp(17px,1.15vw,20px)!important;line-height:1.9!important}
