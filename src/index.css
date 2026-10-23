@@ -150,3 +150,10 @@ body.practice-fullscreen-active{overflow:hidden}
 .chat-fullscreen .chat-title{max-width:1500px;margin:0 auto 16px}
 body.practice-fullscreen-active{overflow:hidden}
 @media(max-width:620px){.chat-fullscreen .chat-transcript{max-height:calc(100vh - 330px);padding:10px}.chat-panel.chat-fullscreen{padding:12px}}
+
+
+.notes-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:14px}
+.notes-heading h2{margin:0 0 6px}.notes-heading p{margin:0}
+.notes-export-actions{display:flex;gap:8px;flex-wrap:wrap}
+.notes-panel textarea{font-size:15px;line-height:1.85;color:#2e3e55;min-height:48vh;padding:20px}
+@media(max-width:620px){.notes-export-actions{width:100%}.notes-export-actions button{flex:1}.notes-panel textarea{min-height:55vh;padding:14px}}
