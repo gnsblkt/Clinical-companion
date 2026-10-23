@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, type FormEvent } from "react";
 import { Activity, ArrowLeft, BookOpen, ExternalLink, Image as ImageIcon, Search, ShieldCheck } from "lucide-react";
 
 type Article = { id: string; title: string; journal?: string; date?: string; url: string; abstract?: string };
@@ -80,7 +80,7 @@ export default function MedicalSearch() {
   const [wiki, setWiki] = useState<WikiItem[]>([]);
   const [images, setImages] = useState<ImageItem[]>([]);
 
-  async function search(event: React.FormEvent<HTMLFormElement>) {
+  async function search(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const term = query.trim();
     if (!term || loading) return;
