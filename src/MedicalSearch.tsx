@@ -100,6 +100,95 @@ async function getCommons(query: string): Promise<ImageItem[]> {
   }).filter((item) => item.thumb);
 }
 
+
+type TopicProfile = { title: string; subtitle: string; scope: string; steps: Array<{ title: string; detail: string }>; tableTitle: string; columns: [string,string,string]; rows: Array<[string,string,string]>; cards: Array<[string,string]>; sources: Array<{label:string;url:string}> };
+
+function buildTopicProfile(query: string): TopicProfile {
+  const q = query.toLowerCase();
+  if (/\b(asthma|wheeze|bronchospasm)\b/.test(q)) return {
+    title: "Asthma learning pathway", subtitle: "Assessment → severity/risk → treatment track → reassessment", scope: "Educational framework only. Asthma treatment differs by age, pregnancy, severity, local formulary and the current guideline; acute severe asthma needs urgent in-person care.",
+    steps: [
+      {title:"1 · Assess first",detail:"Assess symptoms, work of breathing, speech, oxygenation and vital signs; identify severe/life-threatening features and arrange emergency support when present."},
+      {title:"2 · Confirm the diagnosis",detail:"Use history of variable respiratory symptoms plus objective evidence of variable expiratory airflow limitation when feasible; consider alternative diagnoses and age-specific testing."},
+      {title:"3 · Separate acute care from long-term control",detail:"For an acute attack, follow the current local acute-asthma protocol and reassess response frequently. For ongoing care, review symptom control, exacerbation risk, inhaler technique, adherence and triggers."},
+      {title:"4 · Personalise and review",detail:"Use a current age-appropriate guideline to select an inhaled corticosteroid-containing strategy where indicated; provide a written action plan and arrange follow-up."}
+    ], tableTitle:"Assessment checkpoints", columns:["Checkpoint","What to check","Next learning question"],
+    rows:[["Symptoms","Variability, night waking, activity limitation, reliever use","How well controlled are symptoms?"],
+    ["Risk","Prior exacerbations, oral steroid courses, low lung function, exposures","What predicts future attacks?"],
+    ["Technique / adherence","Device technique, access, adherence, action plan","Could modifiable factors explain poor control?"]],
+    cards:[["What supports an asthma diagnosis?","A compatible history of variable respiratory symptoms plus objective evidence of variable expiratory airflow limitation; a single symptom alone is not enough."],["What should be reviewed before stepping up treatment?","Diagnosis, inhaler technique, adherence, exposures/comorbidities, current control and future exacerbation risk."],["What is the priority in a severe acute attack?","Urgent assessment and treatment under the local emergency protocol with repeated reassessment; do not rely on a study aid for real-time care."]],
+    sources:[{label:"GINA · Global Strategy for Asthma Management and Prevention",url:"https://ginasthma.org/"}]
+  };
+  if (/\b(dka|diabetic ketoacidosis|ketoacidosis)\b/.test(q)) return {
+    title:"Diabetic ketoacidosis (DKA) learning pathway", subtitle:"Recognise → assess severity → fluids / insulin / potassium → close monitoring", scope:"DKA is a medical emergency. This is a study framework, not a dosing protocol; use current local adult or paediatric guidance and specialist supervision.",
+    steps:[
+      {title:"1 · Suspect and confirm",detail:"Assess symptoms and precipitating illness; confirm hyperglycaemia or known diabetes with ketonaemia and metabolic acidosis using local diagnostic criteria. Euglycaemic DKA can occur."},
+      {title:"2 · Assess severity and trigger",detail:"Check haemodynamics, mental status, electrolytes, renal function, ketones and acid-base status. Look for infection, missed insulin, new diabetes, medicines and other acute illness."},
+      {title:"3 · Treat in a monitored setting",detail:"Begin protocol-directed fluids; assess potassium before and during insulin therapy; insulin is used to suppress ketogenesis when safe. Replace electrolytes and treat the precipitating cause."},
+      {title:"4 · Reassess resolution",detail:"Trend clinical status, glucose, ketones, potassium and acid-base markers; avoid stopping treatment solely because glucose has normalised. Transition and overlap insulin according to protocol."}
+    ],tableTitle:"Critical decision points",columns:["Decision","Why it matters","Check / action"],
+    rows:[["Potassium","Insulin shifts potassium intracellularly","Follow protocol-specific potassium thresholds and replacement; insulin may need to be delayed if potassium is dangerously low."],["Fluids","Volume depletion and perfusion","Choose fluid and rate using age, comorbidity, sodium and haemodynamic status."],["Resolution","Glucose alone is insufficient","Use ketone and acid-base criteria from the current protocol."]],
+    cards:[["What defines DKA conceptually?","Diabetes/hyperglycaemia (which may be modest), ketonaemia and metabolic acidosis; use current formal criteria."],["Why check potassium before insulin?","Insulin lowers serum potassium by shifting it into cells, so severe hypokalaemia can become dangerous."],["What must be treated alongside DKA?","The precipitating cause, such as infection or insulin interruption, while monitoring metabolic recovery."]],
+    sources:[{label:"2024 international consensus report on hyperglycemic crises (ADA/EASD/JBDS/AACE/DTS)",url:"https://diabetesjournals.org/care/article/47/8/1257/156808/Hyperglycemic-Crises-in-Adults-With-Diabetes-A"}]
+  };
+  if (/\b(sepsis|septic shock)\b/.test(q)) return {
+    title:"Sepsis recognition and escalation pathway",subtitle:"Recognise organ dysfunction → urgent assessment → source control and reassessment",scope:"Sepsis is time-critical. Use local emergency pathways and current Surviving Sepsis Campaign guidance; this overview does not set patient-specific antibiotic or fluid orders.",
+    steps:[
+      {title:"1 · Recognise possible infection with organ dysfunction",detail:"Assess clinical appearance, vital signs, perfusion, mental status and organ dysfunction; screening scores support but do not replace clinical assessment."},
+      {title:"2 · Escalate and investigate promptly",detail:"Arrange urgent senior review when sepsis is suspected; obtain appropriate cultures and tests when this does not meaningfully delay urgent treatment. Assess likely source and alternative diagnoses."},
+      {title:"3 · Start time-critical care",detail:"Give antimicrobials promptly when indicated under current local guidance; assess perfusion and fluid responsiveness, support oxygenation/organ function, and obtain source control."},
+      {title:"4 · Reassess response",detail:"Repeatedly review haemodynamics, perfusion, lactate where indicated, urine output, organ function, fluid tolerance and antimicrobial adequacy; escalate vasopressor/critical-care support when required."}
+    ],tableTitle:"First-hour reasoning prompts",columns:["Domain","Clinical question","Study focus"],
+    rows:[["Infection","What source is likely and what else could mimic it?","Source-directed examination and tests"],["Perfusion","Are there signs of shock or organ dysfunction?","Trends and repeated reassessment"],["Treatment","What must not be delayed?","Local antimicrobial, resuscitation and source-control pathways"]],
+    cards:[["Does a screening score diagnose or exclude sepsis?","No. Scores can support recognition but cannot independently diagnose or safely rule out sepsis."],["Why reassess after initial fluids?","Response and fluid tolerance vary; ongoing treatment should be guided by repeated clinical assessment."],["What is source control?","A procedure or intervention to remove, drain or otherwise control the infection source when indicated."]],
+    sources:[{label:"Surviving Sepsis Campaign · Guidelines and resources",url:"https://www.sccm.org/SurvivingSepsisCampaign/Guidelines"}]
+  };
+  if (/\b(iron deficiency|iron-deficiency|anaemia|anemia|microcytic)\b/.test(q)) return {
+    title:"Anaemia / iron deficiency diagnostic pathway",subtitle:"Confirm anaemia → classify pattern → establish cause → replace and follow up",scope:"Interpret results using age, pregnancy status, comorbidity, inflammation and local reference ranges. Severe symptoms or suspected bleeding require timely clinical assessment.",
+    steps:[
+      {title:"1 · Confirm and contextualise",detail:"Review CBC, haemoglobin, MCV/RDW and clinical context; interpret thresholds by age, sex, pregnancy and applicable guideline."},
+      {title:"2 · Check iron status",detail:"Use ferritin with transferrin saturation/iron studies as appropriate; ferritin may be falsely normal or high in inflammation, so interpret it in context."},
+      {title:"3 · Find the cause",detail:"Assess dietary intake, menstrual or other blood loss, pregnancy, malabsorption, medication history and relevant chronic disease; do not assume iron deficiency is the only cause of microcytosis."},
+      {title:"4 · Treat and verify response",detail:"Choose oral or IV replacement according to cause, severity, tolerance and guideline; address ongoing blood loss and repeat tests at an appropriate interval to confirm response."}
+    ],tableTitle:"Pattern recognition",columns:["Finding","Possible interpretation","Caution"],
+    rows:[["Low ferritin","Supports depleted iron stores","Inflammation can mask deficiency if ferritin is not low."],["Microcytosis","Iron deficiency, thalassaemia trait and other causes","MCV alone does not establish the cause."],["Poor response to iron","Adherence, ongoing loss, malabsorption, wrong diagnosis or mixed deficiency","Reassess rather than endlessly escalating empiric treatment."]],
+    cards:[["Does microcytosis prove iron deficiency?","No. Consider iron deficiency, thalassaemia trait and other causes; interpret CBC with iron studies and context."],["Why can ferritin mislead?","Ferritin is an acute-phase reactant and may be normal or elevated with inflammation despite iron deficiency."],["What should accompany iron replacement?","Investigate and manage the cause, then document haematologic response and replenishment."]],
+    sources:[{label:"British Society of Gastroenterology · Iron deficiency anaemia guideline",url:"https://gut.bmj.com/content/70/11/2030"}]
+  };
+  return {
+    title: "Topic learning workspace", subtitle: "Frame the question → verify guidance → build a differential → check management and follow-up",
+    scope: "No validated topic-specific clinical algorithm is available in this workspace for this search yet. The steps below are a structured study scaffold, not a diagnosis or treatment pathway. Use the linked primary guideline and original studies to populate it.",
+    steps:[
+      {title:"1 · Define the clinical question",detail:"Specify population, setting, presentation, time course and the decision you are trying to understand."},
+      {title:"2 · Verify authoritative guidance",detail:"Open current guideline portals and check issuing body, publication/update date, jurisdiction, population and recommendation strength."},
+      {title:"3 · Build a differential or classification",detail:"Organise causes, phenotypes or severity categories from trusted sources; note red flags and important mimics."},
+      {title:"4 · Summarise management and follow-up",detail:"Extract first-line options, contraindications, escalation criteria, monitoring and follow-up from the source itself; preserve uncertainty and local variation."}
+    ],tableTitle:"Topic extraction table",columns:["Element","Capture from source","Quality check"],
+    rows:[["Definition / classification","Criteria, subtypes, severity","Exact population and threshold?"],
+    ["Diagnosis","Tests, interpretation, differential, red flags","Test limits and alternate diagnoses?"],
+    ["Management","First-line options, contraindications, escalation","Guideline current and locally applicable?"]],
+    cards:[["What is the key definition?","Write a one-sentence definition from a current authoritative source and record the date/version."],["What finding changes urgency or management?","Identify red flags and decision thresholds from the relevant guideline; do not infer them from search snippets."],["How should recommendations be checked?","Verify source, date, population, jurisdiction, evidence strength and local applicability."]],
+    sources:[{label:"World Health Organization publications",url:"https://www.who.int/publications/i"}, {label:"NICE guidance",url:"https://www.nice.org.uk/guidance"}, {label:"PubMed · biomedical literature",url:"https://pubmed.ncbi.nlm.nih.gov/"}]
+  };
+}
+
+function TopicLearningWorkspace({query}: {query:string}) {
+  const profile = buildTopicProfile(query);
+  return <section className="medsearch-section medatlas-topic-workspace" id="topic-workspace">
+    <div className="medsearch-section-title"><span className="medsearch-icon violet"><Brain size={19}/></span><div><h3>{profile.title}</h3><p>{profile.subtitle}</p></div><span className="medsearch-count">Study aid</span></div>
+    <div className="medatlas-clinical-alert"><strong>Scope and safety</strong><span>{profile.scope}</span></div>
+    <div className="medatlas-subhead"><span>01</span><div><h4>Learning pathway</h4><p>Structured checkpoints; not a substitute for current topic-specific guidance</p></div></div>
+    <div className="medatlas-flowchart" aria-label={profile.title}>
+      {profile.steps.map((step,index)=><React.Fragment key={step.title}><div className={`medatlas-flow-node ${index===0?"start":index===profile.steps.length-1?"urgent":""}`}><b>{step.title}</b><span>{step.detail}</span></div>{index<profile.steps.length-1&&<div className="medatlas-flow-down">↓ next checkpoint</div>}</React.Fragment>)}
+    </div>
+    <div className="medatlas-subhead"><span>02</span><div><h4>{profile.tableTitle}</h4><p>Decision prompts and common interpretation pitfalls</p></div></div>
+    <div className="medsearch-comparison-wrap"><table className="medsearch-comparison-table medatlas-clinical-table"><thead><tr>{profile.columns.map(col=><th key={col}>{col}</th>)}</tr></thead><tbody>{profile.rows.map((row,i)=><tr key={i}>{row.map((cell,j)=><td key={j}>{cell}</td>)}</tr>)}</tbody></table></div>
+    <div className="medatlas-subhead"><span>03</span><div><h4>Active recall</h4><p>Tap each prompt to reveal the answer</p></div></div>
+    <div className="medatlas-auto-cards">{profile.cards.map(([question,answer],index)=><details className="medatlas-recall-card" key={question}><summary><span>{String(index+1).padStart(2,"0")}</span>{question}</summary><p>{answer}</p></details>)}</div>
+    <div className="medatlas-source-panel"><b>Suggested primary references</b>{profile.sources.map(source=><a key={source.url} href={source.url} target="_blank" rel="noreferrer">{source.label} ↗</a>)}<p className="medatlas-footnote">Confirm that a source is current and applicable before using it. This workspace is educational and does not replace professional judgement.</p></div>
+  </section>;
+}
+
 export default function MedicalSearch() {
   const [query, setQuery] = useState("");
   const [activeQuery, setActiveQuery] = useState("");
