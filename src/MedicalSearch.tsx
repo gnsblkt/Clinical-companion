@@ -106,7 +106,8 @@ export default function MedicalSearch() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [sourceErrors, setSourceErrors] = useState<string[]>([]);
-  const [articles, setArticles] = useState<Article[]>([]);\n  const [guidelines, setGuidelines] = useState<Article[]>([]);
+  const [articles, setArticles] = useState<Article[]>([]);
+  const [guidelines, setGuidelines] = useState<Article[]>([]);
   const [wiki, setWiki] = useState<WikiItem[]>([]);
   const [images, setImages] = useState<ImageItem[]>([]);
 
