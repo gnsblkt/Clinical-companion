@@ -198,3 +198,131 @@ body.practice-fullscreen-active{overflow:hidden}
  .practice-float-dock button span{font-size:12px}
  .answer-explanation p{font-size:16px;line-height:1.8}
 }
+
+
+/* Responsive workspace refinement — desktop, tablet and mobile */
+.app-shell{grid-template-columns:248px minmax(0,1fr);width:100%;min-width:0}
+.main{min-width:0;max-width:none;width:100%;padding:clamp(18px,2.8vw,42px) clamp(16px,3vw,48px)}
+.panel,.practice-workspace,.chat-panel{min-width:0;max-width:100%}
+.practice-library-heading{align-items:center}
+.practice-library-actions{justify-content:flex-end}
+.practice-workspace:not(.is-fullscreen)>.practice{width:100%;max-width:100%;margin:0}
+.practice-workspace:not(.is-fullscreen) .practice-library{width:100%}
+.practice h2,.answer-explanation p,.markdown-answer{overflow-wrap:anywhere;word-break:normal}
+.chat-panel{width:100%;max-width:none;margin:0}
+.chat-layout{width:100%;min-width:0;grid-template-columns:minmax(180px,230px) minmax(0,1fr);align-items:stretch}
+.chat-main{display:flex;flex-direction:column;min-width:0}
+.chat-transcript{min-width:0;width:100%;max-width:none}
+.chat-bubble{max-width:min(100%,1000px);font-size:15px;line-height:1.75}
+.markdown-answer{font-size:15px;line-height:1.8}
+.markdown-answer p{margin:10px 0}
+.markdown-answer li{margin:5px 0}
+.markdown-answer th,.markdown-answer td{padding:9px 11px}
+.chat-composer{width:100%;max-width:none}
+.chat-composer textarea{font-size:15px;min-height:52px}
+.chat-title>div{min-width:200px;flex:1}
+.chat-title button{flex-shrink:0}
+
+/* Real edge-to-edge viewport overlays; do not inherit the app's max-width. */
+.chat-panel.chat-fullscreen{
+ position:fixed!important;inset:0!important;left:0!important;top:0!important;right:0!important;bottom:0!important;
+ width:100vw!important;max-width:none!important;height:100vh!important;height:100dvh!important;max-height:none!important;
+ margin:0!important;padding:clamp(12px,2vw,28px)!important;border:0!important;border-radius:0!important;
+ box-sizing:border-box!important;z-index:2147483001!important;background:#f5f7fb!important;
+ display:flex!important;flex-direction:column!important;overflow:hidden!important;gap:0!important;
+}
+.chat-fullscreen .chat-title{width:100%;max-width:none!important;flex:0 0 auto;margin:0 0 14px!important;padding:0 0 13px;border-bottom:1px solid #e0e7ef}
+.chat-fullscreen .chat-title>div{flex:1;min-width:180px}
+.chat-fullscreen .chat-title h2{font-size:clamp(20px,2vw,27px)}
+.chat-fullscreen .chat-title p{font-size:13px}
+.chat-fullscreen .chat-layout{
+ flex:1 1 auto!important;min-height:0!important;height:auto!important;width:100%!important;max-width:none!important;
+ grid-template-columns:minmax(210px,clamp(220px,19vw,300px)) minmax(0,1fr)!important;
+ gap:clamp(12px,1.5vw,24px)!important;overflow:hidden!important;margin:0!important;
+}
+.chat-fullscreen .chat-history{max-height:none!important;height:100%!important;min-height:0!important;overflow:auto!important;
+ padding:12px!important;border:1px solid #e0e7ef!important;border-radius:14px;background:#fff;order:initial!important}
+.chat-fullscreen .chat-main{height:100%!important;min-height:0!important;overflow:hidden!important;display:flex!important;flex-direction:column!important}
+.chat-fullscreen .chat-transcript{
+ flex:1 1 auto!important;min-height:0!important;height:auto!important;max-height:none!important;width:100%!important;
+ overflow:auto!important;padding:clamp(12px,2vw,28px)!important;border:1px solid #e0e7ef;border-radius:16px;
+ background:#fff;gap:18px;overscroll-behavior:contain
+}
+.chat-fullscreen .chat-bubble{max-width:min(94%,1120px);padding:clamp(14px,1.5vw,22px);font-size:clamp(15px,1vw,17px);line-height:1.85}
+.chat-fullscreen .markdown-answer{font-size:clamp(15px,1vw,17px);line-height:1.9}
+.chat-fullscreen .markdown-answer h1{font-size:1.65em}
+.chat-fullscreen .markdown-answer h2{font-size:1.4em}
+.chat-fullscreen .markdown-answer h3{font-size:1.18em}
+.chat-fullscreen .markdown-answer table{font-size:14px}
+.chat-fullscreen .chat-composer{flex:0 0 auto;position:relative!important;bottom:auto!important;width:100%!important;max-width:none!important;
+ margin:12px 0 0!important;padding:10px;background:#fff}
+.chat-fullscreen .chat-composer textarea{font-size:16px;max-height:22vh;min-height:58px}
+.chat-fullscreen .export-actions{flex:0 0 auto;margin:0!important;max-width:none!important;padding-top:10px}
+.chat-fullscreen .fine-print{flex:0 0 auto;margin:8px 0 0;font-size:11px}
+.chat-fullscreen.chat-history-hidden .chat-layout{grid-template-columns:minmax(0,1fr)!important}
+.chat-fullscreen.chat-history-hidden .chat-history{display:none!important}
+.chat-fullscreen.chat-history-hidden .chat-bubble{max-width:min(94%,1250px)}
+.practice-workspace.is-fullscreen .practice{max-width:1440px!important;width:100%!important}
+.practice-workspace.is-fullscreen .practice-library{display:none!important}
+.practice-workspace.is-fullscreen .practice h2{font-size:clamp(24px,2vw,34px)}
+.practice-workspace.is-fullscreen .answer-explanation p{font-size:clamp(17px,1.15vw,20px)!important;line-height:1.9!important}
+.practice-float-dock{bottom:max(14px,env(safe-area-inset-bottom))!important}
+@media(max-width:1000px){
+ .main{padding:22px 20px}
+ .chat-layout{grid-template-columns:minmax(160px,200px) minmax(0,1fr)}
+ .chat-fullscreen .chat-layout{grid-template-columns:minmax(180px,230px) minmax(0,1fr)!important}
+ .chat-fullscreen .chat-title{gap:8px}
+ .chat-fullscreen .chat-title button{padding:9px 11px;font-size:12px}
+}
+@media(max-width:760px){
+ .app-shell{grid-template-columns:minmax(0,1fr)}
+ .main{padding:16px 12px 28px}
+ .topbar{margin-bottom:18px}
+ .chat-panel{padding:16px}
+ .chat-layout{grid-template-columns:minmax(0,1fr)}
+ .chat-history{order:2;max-height:180px}
+ .chat-main{order:1}
+ .chat-title{gap:8px}
+ .chat-title>div{width:auto;flex:1}
+ .chat-title button{padding:9px 10px;font-size:12px}
+ .chat-fullscreen.chat-panel{padding:10px!important}
+ .chat-fullscreen .chat-title{gap:7px;margin-bottom:8px!important;padding-bottom:8px}
+ .chat-fullscreen .chat-title>div{flex-basis:100%;min-width:0}
+ .chat-fullscreen .chat-title button{font-size:11px;padding:8px 9px}
+ .chat-fullscreen .chat-layout{display:flex!important;flex-direction:column!important;gap:0!important}
+ .chat-fullscreen .chat-history{flex:0 0 auto!important;max-height:24vh!important;height:auto!important;display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));padding:8px!important;margin-bottom:8px;order:0!important}
+ .chat-fullscreen.chat-history-hidden .chat-history{display:none!important}
+ .chat-fullscreen .chat-main{flex:1 1 auto!important;min-height:0!important;height:auto!important;order:1!important}
+ .chat-fullscreen .chat-transcript{padding:12px!important;gap:12px}
+ .chat-fullscreen .chat-bubble{max-width:100%;padding:13px;font-size:15px}
+ .chat-fullscreen .markdown-answer{font-size:15px}
+ .chat-fullscreen .chat-composer{margin-top:8px!important}
+ .chat-fullscreen .export-actions{gap:6px}
+ .chat-fullscreen .export-actions>*{flex:1;font-size:11px;padding:9px}
+ .chat-fullscreen .fine-print{font-size:10px}
+ .practice-library-heading{align-items:stretch}
+ .practice-library-actions{justify-content:flex-start}
+}
+@media(max-width:480px){
+ .practice-library{padding:14px}
+ .practice-library-heading h2{font-size:20px}
+ .practice-library-actions button{flex:1}
+ .practice-workspace.is-fullscreen{padding:10px!important}
+ .practice-workspace.is-fullscreen>.practice{padding:15px!important;margin-bottom:78px!important}
+ .practice-workspace.is-fullscreen .practice h2{font-size:22px;line-height:1.45}
+ .practice-workspace.is-fullscreen .practice .option{font-size:16px;padding:13px}
+ .answer-explanation p{font-size:16px;line-height:1.8}
+ .practice-float-dock{max-width:calc(100vw - 16px);gap:4px;padding:6px}
+ .practice-float-dock button{padding:9px 10px;min-width:0}
+ .chat-panel{padding:12px}
+ .chat-fullscreen.chat-panel{padding:8px!important}
+ .chat-fullscreen .chat-title h2{font-size:18px}
+ .chat-fullscreen .chat-title p{font-size:11px}
+ .chat-fullscreen .chat-title button{padding:7px 8px}
+ .chat-fullscreen .chat-history{max-height:20vh!important}
+ .chat-fullscreen .chat-composer textarea{font-size:16px;min-height:50px}
+ .chat-fullscreen .export-actions>*{font-size:10px;padding:8px 6px}
+}
+@media(prefers-reduced-motion:reduce){
+ *,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+}
