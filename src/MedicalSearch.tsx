@@ -159,10 +159,17 @@ export default function MedicalSearch() {
         <a href="#literature"><BookOpen size={15}/> Research</a>
         <a href="#visuals"><ImageIcon size={15}/> Images</a>
         <a href="#study-tools"><Brain size={15}/> Study tools</a>
-      </nav>
+      </nav>}
 
       {!loading && activeQuery && <>
-        <section className="medsearch-section">
+        <section className="medsearch-section" id="guidelines">
+          <div className="medsearch-section-title"><span className="medsearch-icon amber"><Landmark size={19}/></span><div><h3>Guidelines and recommendations</h3><p>Official source portals plus PubMed-indexed guideline records</p></div><span className="medsearch-count">{guidelines.length} records</span></div>
+          <p className="medsearch-source-note">These are discovery links, not an endorsement of every result. Confirm the issuing organization, intended population, jurisdiction, publication/update date, and whether the guidance is still current.</p>
+          <div className="medsearch-guideline-grid">{getGuidelineSources(activeQuery).map((source) => <article className="medsearch-guideline-card" key={source.name}><span>{source.region}</span><h4>{source.name}</h4><p>{source.description}</p><a className="medsearch-source-link" href={source.url} target="_blank" rel="noreferrer">Open source portal ↗</a></article>)}</div>
+          {guidelines.length ? <div className="medsearch-article-list medsearch-guideline-records">{guidelines.map((article) => <article className="medsearch-article" key={article.id}><div className="medsearch-article-meta">{article.journal}{article.date ? " · " + article.date : ""}</div><h4><a href={article.url} target="_blank" rel="noreferrer">{article.title}<ExternalLink size={14}/></a></h4><p>Returned by a clinical-practice-guideline publication-type search. Verify article type, full document, scope, and currency before using it as a recommendation.</p><a className="medsearch-source-link" href={article.url} target="_blank" rel="noreferrer">Review PubMed record ↗</a></article>)}</div> : <p className="medsearch-empty">No PubMed records were returned by the guideline filter. Use the official source portals above as well; guidelines may not be indexed consistently.</p>}
+        </section>
+
+        <section className="medsearch-section" id="literature">
           <div className="medsearch-section-title"><span className="medsearch-icon"><BookOpen size={19}/></span><div><h3>Biomedical literature</h3><p>PubMed · National Library of Medicine</p></div><span className="medsearch-count">{articles.length} results</span></div>
           {articles.length ? <div className="medsearch-article-list">{articles.map((article) => <article className="medsearch-article" key={article.id}><div className="medsearch-article-meta">{article.journal}{article.date ? " · " + article.date : ""}</div><h4><a href={article.url} target="_blank" rel="noreferrer">{article.title}<ExternalLink size={14}/></a></h4><p>Open the PubMed record to review the abstract, indexing details, publication information, and links to full text where available.</p><a className="medsearch-source-link" href={article.url} target="_blank" rel="noreferrer">View PubMed record ↗</a></article>)}</div> : <p className="medsearch-empty">No PubMed records found for this query.</p>}
         </section>
@@ -172,7 +179,7 @@ export default function MedicalSearch() {
           {wiki.length ? <div className="medsearch-wiki-grid">{wiki.map((item) => <article className="medsearch-wiki-card" key={item.title}><h4><a href={item.url} target="_blank" rel="noreferrer">{item.title}<ExternalLink size={13}/></a></h4><p>{item.extract || "Open the article for a general topic overview."}</p><a className="medsearch-source-link" href={item.url} target="_blank" rel="noreferrer">Read article ↗</a></article>)}</div> : <p className="medsearch-empty">No topic pages found for this query.</p>}
         </section>
 
-        <section className="medsearch-section">
+        <section className="medsearch-section" id="visuals">
           <div className="medsearch-section-title"><span className="medsearch-icon teal"><ImageIcon size={19}/></span><div><h3>Educational images</h3><p>Wikimedia Commons · verify license before reuse</p></div><span className="medsearch-count">{images.length} results</span></div>
           {images.length ? <div className="medsearch-image-grid">{images.map((item) => <article className="medsearch-image-card" key={item.page}><a className="medsearch-image" href={item.page} target="_blank" rel="noreferrer"><img src={item.thumb} alt={item.title} loading="lazy"/></a><div className="medsearch-image-info"><h4><a href={item.page} target="_blank" rel="noreferrer">{item.title}</a></h4><p><strong>License:</strong> {item.license}</p><p><strong>Creator:</strong> {item.artist}</p><p><strong>Credit:</strong> {item.credit}</p><a className="medsearch-source-link" href={item.page} target="_blank" rel="noreferrer">Source & license ↗</a></div></article>)}</div> : <p className="medsearch-empty">No Commons images found for this query.</p>}
         </section>
@@ -180,6 +187,16 @@ export default function MedicalSearch() {
         <section className="medsearch-section">
           <div className="medsearch-section-title"><span className="medsearch-icon violet"><ImageIcon size={19}/></span><div><h3>Images from Wikipedia</h3><p>Article thumbnails · tap an image to open its Wikipedia page</p></div><span className="medsearch-count">{wiki.filter((item) => item.thumbnail).length} images</span></div>
           {wiki.some((item) => item.thumbnail) ? <div className="medsearch-image-grid">{wiki.filter((item) => item.thumbnail).map((item) => <article className="medsearch-image-card" key={item.url}><a className="medsearch-image" href={item.url} target="_blank" rel="noreferrer" aria-label={`Open Wikipedia article: ${item.title}`}><img src={item.thumbnail} alt={item.title} loading="lazy"/></a><div className="medsearch-image-info"><h4><a href={item.url} target="_blank" rel="noreferrer">{item.title} <ExternalLink size={13}/></a></h4><p>Image thumbnail from the linked Wikipedia article.</p><a className="medsearch-source-link" href={item.url} target="_blank" rel="noreferrer">Open Wikipedia page ↗</a></div></article>)}</div> : <p className="medsearch-empty">No article thumbnails are available for this search. Open a topic result above to explore its page.</p>}
+        </section>
+
+        <section className="medsearch-section" id="study-tools">
+          <div className="medsearch-section-title"><span className="medsearch-icon violet"><Brain size={19}/></span><div><h3>Study tools</h3><p>Source-linked learning modules</p></div></div>
+          <div className="medsearch-study-grid">
+            <article><GitBranch/><h4>Flowcharts</h4><p>Build diagnostic and management pathways from verified recommendations, with source links on decision nodes.</p><span>Evidence-linked diagrams</span></article>
+            <article><Layers/><h4>Comparison tables</h4><p>Organize criteria, differential diagnoses, staging, and treatment comparisons with context and citations.</p><span>Source-linked tables</span></article>
+            <article><ClipboardList/><h4>Flashcards and questions</h4><p>Create original revision cards and exam-style questions from reviewed topic material, not copied question banks.</p><span>NEET-PG · INI-CET · MECEE-PG · USMLE</span></article>
+          </div>
+          <p className="medsearch-source-note">These study modules are roadmap placeholders in this version, not generated clinical guidance. They will be enabled after source verification and citation checks are implemented.</p>
         </section>
       </>}
 
