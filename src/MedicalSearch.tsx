@@ -1,0 +1,148 @@
+import { useState } from "react";
+import { Activity, ArrowLeft, BookOpen, ExternalLink, Image as ImageIcon, Search, ShieldCheck } from "lucide-react";
+
+type Article = { id: string; title: string; journal?: string; date?: string; url: string; abstract?: string };
+type WikiItem = { title: string; extract: string; url: string };
+type ImageItem = { title: string; thumb: string; page: string; license: string; artist: string; credit: string };
+
+const endpoint = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/";
+
+async function getPubMed(query: string): Promise<Article[]> {
+  const searchUrl = new URL(endpoint + "esearch.fcgi");
+  searchUrl.search = new URLSearchParams({ db: "pubmed", term: query, retmax: "6", retmode: "json", sort: "relevance" }).toString();
+  const searchResponse = await fetch(searchUrl);
+  if (!searchResponse.ok) throw new Error("PubMed search is unavailable right now.");
+  const searchData = await searchResponse.json();
+  const ids: string[] = searchData?.esearchresult?.idlist || [];
+  if (!ids.length) return [];
+  const summaryUrl = new URL(endpoint + "esummary.fcgi");
+  summaryUrl.search = new URLSearchParams({ db: "pubmed", id: ids.join(","), retmode: "json" }).toString();
+  const summaryResponse = await fetch(summaryUrl);
+  if (!summaryResponse.ok) throw new Error("PubMed article details could not be loaded.");
+  const summaryData = await summaryResponse.json();
+  return ids.map((id) => {
+    const item = summaryData?.result?.[id] || {};
+    return {
+      id,
+      title: String(item.title || "Untitled article").replace(/<[^>]+>/g, ""),
+      journal: item.fulljournalname || item.source || "PubMed indexed journal",
+      date: item.pubdate || "",
+      url: "https://pubmed.ncbi.nlm.nih.gov/" + id + "/",
+    };
+  });
+}
+
+async function getWikipedia(query: string): Promise<WikiItem[]> {
+  const url = new URL("https://en.wikipedia.org/w/api.php");
+  url.search = new URLSearchParams({ action: "query", list: "search", srsearch: query, srlimit: "5", format: "json", origin: "*" }).toString();
+  const response = await fetch(url);
+  if (!response.ok) throw new Error("Wikipedia search is unavailable right now.");
+  const data = await response.json();
+  return (data?.query?.search || []).map((item: { title: string; snippet: string }) => ({
+    title: item.title,
+    extract: String(item.snippet || "").replace(/<[^>]+>/g, "").replace(/&quot;/g, '"').replace(/&#039;/g, "'"),
+    url: "https://en.wikipedia.org/wiki/" + encodeURIComponent(item.title.replace(/ /g, "_")),
+  }));
+}
+
+async function getCommons(query: string): Promise<ImageItem[]> {
+  const url = new URL("https://commons.wikimedia.org/w/api.php");
+  url.search = new URLSearchParams({
+    action: "query", generator: "search", gsrsearch: query + " medical", gsrnamespace: "6", gsrlimit: "6",
+    prop: "imageinfo", iiprop: "url|extmetadata", iiurlwidth: "640", format: "json", origin: "*",
+  }).toString();
+  const response = await fetch(url);
+  if (!response.ok) throw new Error("Wikimedia Commons image search is unavailable right now.");
+  const data = await response.json();
+  return Object.values(data?.query?.pages || {}).map((raw: any) => {
+    const item = raw as { title?: string; imageinfo?: Array<{ thumburl?: string; url?: string; descriptionurl?: string; extmetadata?: Record<string, { value?: string }> }> };
+    const info = item.imageinfo?.[0];
+    const meta = info?.extmetadata || {};
+    const clean = (value?: string) => String(value || "").replace(/<[^>]*>/g, "").replace(/&quot;/g, '"').trim();
+    return {
+      title: String(item.title || "Medical illustration").replace(/^File:/, ""),
+      thumb: info?.thumburl || info?.url || "",
+      page: info?.descriptionurl || info?.url || "https://commons.wikimedia.org/",
+      license: clean(meta.LicenseShortName?.value) || "License details on source page",
+      artist: clean(meta.Artist?.value) || "Creator listed on source page",
+      credit: clean(meta.Attribution?.value) || clean(meta.Credit?.value) || "See source page for attribution",
+    };
+  }).filter((item) => item.thumb);
+}
+
+export default function MedicalSearch() {
+  const [query, setQuery] = useState("");
+  const [activeQuery, setActiveQuery] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [sourceErrors, setSourceErrors] = useState<string[]>([]);
+  const [articles, setArticles] = useState<Article[]>([]);
+  const [wiki, setWiki] = useState<WikiItem[]>([]);
+  const [images, setImages] = useState<ImageItem[]>([]);
+
+  async function search(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const term = query.trim();
+    if (!term || loading) return;
+    setLoading(true); setError(""); setSourceErrors([]); setActiveQuery(term);
+    const results = await Promise.allSettled([getPubMed(term), getWikipedia(term), getCommons(term)]);
+    const failures: string[] = [];
+    if (results[0].status === "fulfilled") setArticles(results[0].value);
+    else { setArticles([]); failures.push("PubMed"); }
+    if (results[1].status === "fulfilled") setWiki(results[1].value);
+    else { setWiki([]); failures.push("Wikipedia"); }
+    if (results[2].status === "fulfilled") setImages(results[2].value);
+    else { setImages([]); failures.push("Wikimedia Commons"); }
+    setSourceErrors(failures);
+    if (failures.length === 3) setError("All sources failed to respond. Check your connection and try again.");
+    setLoading(false);
+  }
+
+  return <div className="medsearch-shell">
+    <header className="medsearch-header">
+      <a className="medsearch-back" href="/" aria-label="Back to Clinical Companion"><ArrowLeft size={17}/> Study workspace</a>
+      <div className="medsearch-brand"><span><Activity size={21}/></span><div><strong>MedAtlas</strong><small>MEDICAL LITERATURE SEARCH</small></div></div>
+      <span className="medsearch-pill"><ShieldCheck size={14}/> Source-linked results</span>
+    </header>
+    <main className="medsearch-main">
+      <section className="medsearch-hero">
+        <span className="medsearch-eyebrow">SEARCH · VERIFY · LEARN</span>
+        <h1>Find the evidence<br/><em>behind the answer.</em></h1>
+        <p>Search biomedical literature, medical topic summaries, and reusable educational images from established public sources.</p>
+        <form className="medsearch-form" onSubmit={search}>
+          <Search size={21}/>
+          <input aria-label="Medical topic" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Try: diabetic ketoacidosis, tuberculosis…" maxLength={180}/>
+          <button type="submit" disabled={!query.trim() || loading}>{loading ? "Searching…" : "Search"}</button>
+        </form>
+        <div className="medsearch-suggestions"><span>Explore:</span>{["asthma", "iron deficiency anemia", "sepsis", "nephrotic syndrome"].map((term) => <button key={term} onClick={() => { setQuery(term); }} type="button">{term}</button>)}</div>
+      </section>
+
+      <div className="medsearch-disclaimer"><ShieldCheck size={17}/><p><strong>For medical education.</strong> Search results are not clinical recommendations. Check publication dates, study design, full text, and current local guidelines before relying on a finding.</p></div>
+      {error && <div className="medsearch-error" role="alert">{error}</div>}
+      {sourceErrors.length > 0 && sourceErrors.length < 3 && <div className="medsearch-warning" role="status">Some sources did not respond: {sourceErrors.join(", ")}. Other available results are shown.</div>}
+
+      {activeQuery && <div className="medsearch-results-head"><div><span>SEARCH RESULTS</span><h2>{activeQuery}</h2></div>{!loading && <small>Results are fetched live from public APIs</small>}</div>}
+      {loading && <div className="medsearch-loading"><span className="medsearch-spinner"/><p>Searching biomedical literature and reference sources…</p></div>}
+
+      {!loading && activeQuery && <>
+        <section className="medsearch-section">
+          <div className="medsearch-section-title"><span className="medsearch-icon"><BookOpen size={19}/></span><div><h3>Biomedical literature</h3><p>PubMed · National Library of Medicine</p></div><span className="medsearch-count">{articles.length} results</span></div>
+          {articles.length ? <div className="medsearch-article-list">{articles.map((article) => <article className="medsearch-article" key={article.id}><div className="medsearch-article-meta">{article.journal}{article.date ? " · " + article.date : ""}</div><h4><a href={article.url} target="_blank" rel="noreferrer">{article.title}<ExternalLink size={14}/></a></h4><p>Open the PubMed record to review the abstract, indexing details, publication information, and links to full text where available.</p><a className="medsearch-source-link" href={article.url} target="_blank" rel="noreferrer">View PubMed record ↗</a></article>)}</div> : <p className="medsearch-empty">No PubMed records found for this query.</p>}
+        </section>
+
+        <section className="medsearch-section">
+          <div className="medsearch-section-title"><span className="medsearch-icon violet"><BookOpen size={19}/></span><div><h3>Topic overview</h3><p>Wikipedia · tertiary orientation only</p></div><span className="medsearch-count">{wiki.length} results</span></div>
+          {wiki.length ? <div className="medsearch-wiki-grid">{wiki.map((item) => <article className="medsearch-wiki-card" key={item.title}><h4><a href={item.url} target="_blank" rel="noreferrer">{item.title}<ExternalLink size={13}/></a></h4><p>{item.extract || "Open the article for a general topic overview."}</p><a className="medsearch-source-link" href={item.url} target="_blank" rel="noreferrer">Read article ↗</a></article>)}</div> : <p className="medsearch-empty">No topic pages found for this query.</p>}
+        </section>
+
+        <section className="medsearch-section">
+          <div className="medsearch-section-title"><span className="medsearch-icon teal"><ImageIcon size={19}/></span><div><h3>Educational images</h3><p>Wikimedia Commons · verify license before reuse</p></div><span className="medsearch-count">{images.length} results</span></div>
+          {images.length ? <div className="medsearch-image-grid">{images.map((item) => <article className="medsearch-image-card" key={item.page}><a className="medsearch-image" href={item.page} target="_blank" rel="noreferrer"><img src={item.thumb} alt={item.title} loading="lazy"/></a><div className="medsearch-image-info"><h4><a href={item.page} target="_blank" rel="noreferrer">{item.title}</a></h4><p><strong>License:</strong> {item.license}</p><p><strong>Creator:</strong> {item.artist}</p><p><strong>Credit:</strong> {item.credit}</p><a className="medsearch-source-link" href={item.page} target="_blank" rel="noreferrer">Source & license ↗</a></div></article>)}</div> : <p className="medsearch-empty">No Commons images found for this query.</p>}
+        </section>
+      </>}
+
+      {!activeQuery && <section className="medsearch-start-grid"><article><BookOpen/><h3>Research papers</h3><p>Find indexed articles and open the original PubMed record.</p></article><article><Activity/><h3>Topic summaries</h3><p>Start with a general overview, then verify important details with primary sources.</p></article><article><ImageIcon/><h3>Reusable visuals</h3><p>Inspect creator and license information before using an illustration.</p></article></section>}
+      <footer className="medsearch-footer">MedAtlas · Evidence discovery for learning · Not a diagnostic or treatment tool</footer>
+    </main>
+  </div>;
+}
