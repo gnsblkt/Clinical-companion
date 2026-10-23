@@ -35,3 +35,35 @@
 @media(max-width:480px){.medsearch-guideline-grid,.medsearch-study-grid{grid-template-columns:1fr}.medatlas-workspace-nav{gap:6px;padding:7px}.medatlas-workspace-nav a{font-size:11px;padding:8px 9px}}
 
 .medsearch-image-search-links{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:14px 16px;margin:12px 0 16px;border:1px solid #dfe9ed;border-radius:12px;background:#f8fbfc}.medsearch-image-search-links a{display:inline-flex;align-items:center;padding:9px 12px;border:1px solid #dce8eb;border-radius:9px;background:#fff;color:#176b61;font-size:12px;font-weight:800;text-decoration:none}.medsearch-image-search-links a:hover{border-color:#9ed5c7}.medsearch-image-search-links p{flex-basis:100%;margin:0;color:#748493;font-size:11px;line-height:1.55}@media(max-width:480px){.medsearch-image-search-links{align-items:stretch;flex-direction:column}.medsearch-image-search-links a{justify-content:center}}
+
+
+/* Functional MedAtlas study tool panels */
+.medsearch-tool-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+.medsearch-tool-tabs button{display:inline-flex;align-items:center;gap:7px;padding:10px 13px;border:1px solid #dce6eb;border-radius:10px;background:#fff;color:#516779;font:700 12px inherit;cursor:pointer}
+.medsearch-tool-tabs button.active{background:#e8f7f2;border-color:#8bcfbb;color:#126c5b}
+.medsearch-tool-panel{padding:20px;border:1px solid #e0e8ed;border-radius:15px;background:#fff}
+.medsearch-tool-panel>h4{margin:0 0 6px;font:750 16px Manrope,system-ui,sans-serif;color:#1b3f58}
+.medsearch-flashcard-form{display:grid;gap:12px;margin:14px 0 18px}
+.medsearch-flashcard-form label{display:grid;gap:6px;color:#405669;font-size:12px;font-weight:700}
+.medsearch-flashcard-form input,.medsearch-flashcard-form textarea{box-sizing:border-box;width:100%;min-width:0;padding:11px 12px;border:1px solid #d6e1e7;border-radius:10px;background:#fbfdfe;color:#1b2d40;font:13px/1.5 inherit}
+.medsearch-flashcard-form button{justify-self:start;border:0;border-radius:10px;background:#147e69;color:#fff;padding:11px 16px;font-weight:800;cursor:pointer}
+.medsearch-flashcard-toolbar{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;color:#64788a;font-size:11px;margin:14px 0 10px}
+.medsearch-flashcard-toolbar strong{color:#1b3f58}
+.medsearch-flashcard-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.medsearch-flashcard{display:flex;flex-direction:column;align-items:flex-start;gap:10px;min-height:130px;text-align:left;padding:16px;border:1px solid #dce7ec;border-radius:12px;background:#f9fcfd;color:#20394c;cursor:pointer}
+.medsearch-flashcard>span{font-size:9px;letter-spacing:1px;font-weight:900;color:#16816d}
+.medsearch-flashcard>strong{font-size:13px;line-height:1.65;white-space:pre-wrap;overflow-wrap:anywhere}
+.medsearch-flashcard>small{margin-top:auto;color:#7e8e9b;font-size:10px}
+.medsearch-comparison-wrap{max-width:100%;overflow-x:auto;border:1px solid #e1e8ed;border-radius:10px}
+.medsearch-comparison-table{width:100%;border-collapse:collapse;background:#fff;font-size:12px;line-height:1.6}
+.medsearch-comparison-table th,.medsearch-comparison-table td{padding:12px;text-align:left;vertical-align:top;border-bottom:1px solid #e8eef2}
+.medsearch-comparison-table th{background:#f4f8fa;color:#516779;font-size:10px;text-transform:uppercase;letter-spacing:.5px}
+.medsearch-comparison-table td:first-child{min-width:240px;color:#203d50;font-weight:600}
+.medsearch-comparison-table td a,.medsearch-flow-sources a{color:#16816d;font-weight:800;text-decoration:none}
+.medsearch-evidence-flow{list-style:none;counter-reset:flow;display:grid;gap:10px;padding:0;margin:16px 0}
+.medsearch-evidence-flow li{position:relative;display:grid;gap:5px;padding:14px 16px;border:1px solid #dce8e9;border-left:4px solid #36a58b;border-radius:10px;background:#f9fcfb}
+.medsearch-evidence-flow li strong{font-size:13px;color:#1b4f4a}
+.medsearch-evidence-flow li span{font-size:12px;line-height:1.65;color:#65798a}
+.medsearch-flow-sources{display:grid;gap:9px;padding:14px;border-radius:10px;background:#f5f9fb;font-size:12px;color:#42596b}
+.medsearch-flow-sources a{line-height:1.5}
+@media(max-width:480px){.medsearch-tool-panel{padding:14px}.medsearch-flashcard-list{grid-template-columns:1fr}.medsearch-tool-tabs button{flex:1;justify-content:center;padding:9px 8px;font-size:11px}}
