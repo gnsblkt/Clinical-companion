@@ -1,5 +1,5 @@
 import React, { useState, type FormEvent } from "react";
-import { Activity, ArrowLeft, BookOpen, ExternalLink, Image as ImageIcon, Search, ShieldCheck } from "lucide-react";
+import { Activity, ArrowLeft, BookOpen, ExternalLink, Image as ImageIcon, Search, ShieldCheck, GitBranch, Layers, Landmark, Brain, ClipboardList } from "lucide-react";
 
 type Article = { id: string; title: string; journal?: string; date?: string; url: string; abstract?: string };
 type WikiItem = { title: string; extract: string; url: string; thumbnail?: string };
@@ -30,6 +30,19 @@ async function getPubMed(query: string): Promise<Article[]> {
       url: "https://pubmed.ncbi.nlm.nih.gov/" + id + "/",
     };
   });
+}
+
+type GuidelineSource = { name: string; region: string; description: string; url: string };
+
+function getGuidelineSources(query: string): GuidelineSource[] {
+  const q = encodeURIComponent(query.trim());
+  return [
+    { name: "World Health Organization", region: "International", description: "Official publications and guidance; check the document scope and date.", url: "https://www.who.int/publications/i?search=" + q },
+    { name: "NICE guidance", region: "United Kingdom", description: "Evidence-based guidance and recommendations for the stated population.", url: "https://www.nice.org.uk/search?q=" + q },
+    { name: "CDC", region: "United States", description: "US public-health guidance and clinical information where relevant.", url: "https://search.cdc.gov/search/?query=" + q },
+    { name: "India Ministry of Health and Family Welfare", region: "India", description: "Check official national programmes and current standard treatment guidance.", url: "https://www.mohfw.gov.in/" },
+    { name: "Department of Health Services", region: "Nepal", description: "Check official Nepal health guidance, programmes, and publications.", url: "https://dohs.gov.np/" },
+  ];
 }
 
 async function getWikipedia(query: string): Promise<WikiItem[]> {
@@ -93,7 +106,7 @@ export default function MedicalSearch() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [sourceErrors, setSourceErrors] = useState<string[]>([]);
-  const [articles, setArticles] = useState<Article[]>([]);
+  const [articles, setArticles] = useState<Article[]>([]);\n  const [guidelines, setGuidelines] = useState<Article[]>([]);
   const [wiki, setWiki] = useState<WikiItem[]>([]);
   const [images, setImages] = useState<ImageItem[]>([]);
 
@@ -102,7 +115,7 @@ export default function MedicalSearch() {
     const term = query.trim();
     if (!term || loading) return;
     setLoading(true); setError(""); setSourceErrors([]); setActiveQuery(term);
-    const results = await Promise.allSettled([getPubMed(term), getWikipedia(term), getCommons(term)]);
+    const results = await Promise.allSettled([getPubMed(term), getPubMed(term + " AND (guideline[Publication Type] OR practice guideline[Publication Type])"), getWikipedia(term), getCommons(term)]);
     const failures: string[] = [];
     if (results[0].status === "fulfilled") setArticles(results[0].value);
     else { setArticles([]); failures.push("PubMed"); }
@@ -111,7 +124,7 @@ export default function MedicalSearch() {
     if (results[2].status === "fulfilled") setImages(results[2].value);
     else { setImages([]); failures.push("Wikimedia Commons"); }
     setSourceErrors(failures);
-    if (failures.length === 3) setError("All sources failed to respond. Check your connection and try again.");
+    if (failures.length === 4) setError("All sources failed to respond. Check your connection and try again.");
     setLoading(false);
   }
 
@@ -140,6 +153,13 @@ export default function MedicalSearch() {
 
       {activeQuery && <div className="medsearch-results-head"><div><span>SEARCH RESULTS</span><h2>{activeQuery}</h2></div>{!loading && <small>Results are fetched live from public APIs</small>}</div>}
       {loading && <div className="medsearch-loading"><span className="medsearch-spinner"/><p>Searching biomedical literature and reference sources…</p></div>}
+
+      {activeQuery && !loading && <nav className="medatlas-workspace-nav" aria-label="Topic workspace sections">
+        <a href="#guidelines"><Landmark size={15}/> Guidelines</a>
+        <a href="#literature"><BookOpen size={15}/> Research</a>
+        <a href="#visuals"><ImageIcon size={15}/> Images</a>
+        <a href="#study-tools"><Brain size={15}/> Study tools</a>
+      </nav>
 
       {!loading && activeQuery && <>
         <section className="medsearch-section">
