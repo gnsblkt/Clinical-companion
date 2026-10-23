@@ -265,7 +265,7 @@ export default function MedicalSearch() {
         <a href="#guidelines"><Landmark size={15}/> Guidelines</a>
         <a href="#literature"><BookOpen size={15}/> Research</a>
         <a href="#visuals"><ImageIcon size={15}/> Images</a>
-        <a href="#study-tools"><Brain size={15}/> Study tools</a>
+        <a href="#topic-workspace"><GitBranch size={15}/> Topic pathway</a><a href="#study-tools"><Brain size={15}/> Study tools</a>
       </nav>}
 
       {!loading && activeQuery && <>
@@ -352,6 +352,7 @@ export default function MedicalSearch() {
           </div>
           <div className="medatlas-source-panel"><b>Primary references</b><a href="https://www.ncbi.nlm.nih.gov/books/NBK619233/" target="_blank" rel="noreferrer">WHO. Consolidated guidelines for prevention, diagnosis and treatment of PPH (2025) ↗</a><a href="https://www.ncbi.nlm.nih.gov/books/NBK619233/table/ch3.tab33/" target="_blank" rel="noreferrer">WHO 2025 · First-response treatment bundle ↗</a><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC9313855/" target="_blank" rel="noreferrer">FIGO recommendations on management of PPH (2022) ↗</a><a href="https://www.nice.org.uk/guidance/ng235/chapter/Recommendations" target="_blank" rel="noreferrer">NICE intrapartum care recommendations · uterine atony treatment ↗</a></div>
         </section>}
+        {!/(postpartum\s+haemorrhage|postpartum\s+hemorrhage|\bpph\b)/i.test(activeQuery) && <TopicLearningWorkspace query={activeQuery} />}
         {!/(postpartum\s+haemorrhage|postpartum\s+hemorrhage|\bpph\b)/i.test(activeQuery) && <section className="medsearch-section" id="study-tools">
           <div className="medsearch-section-title"><span className="medsearch-icon violet"><Brain size={19}/></span><div><h3>Study tools</h3><p>Working tools for {activeQuery} · outputs are based on search metadata or notes you enter</p></div></div>
           <div className="medsearch-tool-tabs" role="tablist" aria-label="Choose study tool">
