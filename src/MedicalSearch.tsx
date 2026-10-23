@@ -41,7 +41,7 @@ function getGuidelineSources(query: string): GuidelineSource[] {
     { name: "NICE guidance", region: "United Kingdom", description: "Evidence-based guidance and recommendations for the stated population.", url: "https://www.nice.org.uk/search?q=" + q },
     { name: "CDC", region: "United States", description: "US public-health guidance and clinical information where relevant.", url: "https://search.cdc.gov/search/?query=" + q },
     { name: "India Ministry of Health and Family Welfare", region: "India", description: "Check official national programmes and current standard treatment guidance.", url: "https://www.mohfw.gov.in/" },
-    { name: "Department of Health Services", region: "Nepal", description: "Check official Nepal health guidance, programmes, and publications.", url: "https://dohs.gov.np/" },
+    { name: "Department of Health Services", region: "Nepal", description: "Check official Nepal health guidance, programmes, and publications.", url: "https://www.dohs.gov.np/" },
   ];
 }
 
@@ -119,9 +119,11 @@ export default function MedicalSearch() {
     const failures: string[] = [];
     if (results[0].status === "fulfilled") setArticles(results[0].value);
     else { setArticles([]); failures.push("PubMed"); }
-    if (results[1].status === "fulfilled") setWiki(results[1].value);
+    if (results[1].status === "fulfilled") setGuidelines(results[1].value);
+    else { setGuidelines([]); failures.push("PubMed guideline filter"); }
+    if (results[2].status === "fulfilled") setWiki(results[2].value);
     else { setWiki([]); failures.push("Wikipedia"); }
-    if (results[2].status === "fulfilled") setImages(results[2].value);
+    if (results[3].status === "fulfilled") setImages(results[3].value);
     else { setImages([]); failures.push("Wikimedia Commons"); }
     setSourceErrors(failures);
     if (failures.length === 4) setError("All sources failed to respond. Check your connection and try again.");
