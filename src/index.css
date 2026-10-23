@@ -140,3 +140,13 @@ body.practice-fullscreen-active{overflow:hidden}
 @media(max-width:950px){.practice-bank-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.bank-filter-row{grid-template-columns:1fr 1fr}.bank-filter-row label{grid-column:1/-1}}
 @media(max-width:620px){.practice-library{padding:15px}.practice-library-heading{flex-direction:column}.practice-library-heading h2{font-size:20px}.practice-library-actions{width:100%}.practice-library-actions button{flex:1}.bank-filter-row{grid-template-columns:1fr}.bank-filter-row label{grid-column:auto}.practice-bank-grid{grid-template-columns:1fr}.practice-head{align-items:flex-start;gap:12px;flex-direction:column}.practice-top-actions{justify-content:flex-start}.practice-actions>*{flex:1}.answer-heading{padding:15px}.answer-explanation{padding:16px}.answer-explanation p{font-size:14px}}
 @media print{.sidebar,.topbar,.notice,.practice-library,.practice-actions,.practice-top-actions,.progress{display:none!important}.main{max-width:none;padding:0}.panel,.answer-panel{box-shadow:none;border:0}.answer-explanation p{font-size:12pt;line-height:1.6}}
+
+
+.chat-panel.chat-fullscreen{position:fixed;inset:0;z-index:1001;overflow:auto;border-radius:0;margin:0;padding:clamp(14px,3vw,36px);background:#f4f6fb}
+.chat-fullscreen .chat-layout{max-width:1500px;margin:0 auto}
+.chat-fullscreen .chat-transcript{max-height:calc(100vh - 300px);min-height:42vh;background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:18px}
+.chat-fullscreen .chat-composer{max-width:1500px;margin:16px auto 0;background:#fff}
+.chat-fullscreen .export-actions,.chat-fullscreen .fine-print{max-width:1500px;margin-left:auto;margin-right:auto}
+.chat-fullscreen .chat-title{max-width:1500px;margin:0 auto 16px}
+body.practice-fullscreen-active{overflow:hidden}
+@media(max-width:620px){.chat-fullscreen .chat-transcript{max-height:calc(100vh - 330px);padding:10px}.chat-panel.chat-fullscreen{padding:12px}}
