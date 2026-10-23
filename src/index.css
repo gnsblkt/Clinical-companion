@@ -88,3 +88,55 @@
 .medatlas-auto-cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.medatlas-recall-card{align-self:start;border:1px solid #dce7ec;border-radius:12px;background:#fff;overflow:hidden}.medatlas-recall-card summary{display:flex;align-items:flex-start;gap:10px;padding:14px;font-size:12px;font-weight:750;line-height:1.6;color:#264b5b;cursor:pointer;list-style:none}.medatlas-recall-card summary::-webkit-details-marker{display:none}.medatlas-recall-card summary>span{display:grid;place-items:center;flex-shrink:0;width:25px;height:25px;border-radius:7px;background:#e5f5ef;color:#147b68;font-size:9px}.medatlas-recall-card[open]{border-color:#8fcdbb;background:#f9fdfb}.medatlas-recall-card p{margin:0;padding:0 14px 15px 49px;font-size:11px;line-height:1.75;color:#5e7382}
 .medatlas-source-panel{display:grid;gap:10px;margin-top:18px;padding:16px;border:1px solid #dce8e8;border-radius:12px;background:#f5faf8;font-size:12px}.medatlas-source-panel>b{color:#254a5b;font-size:13px}.medatlas-source-panel a{font-size:11px;line-height:1.6}
 @media(max-width:600px){.medatlas-flow-grid,.medatlas-flow-branches,.medatlas-fact-grid,.medatlas-auto-cards{grid-template-columns:1fr}.medatlas-flowchart{padding:10px}.medatlas-flow-node{padding:12px}.medatlas-topic-meta{align-items:flex-start;flex-direction:column}.medatlas-topic-meta span{min-width:0}.medatlas-subhead h4{font-size:15px}.medatlas-recall-card p{padding-left:14px}.medatlas-clinical-table td{min-width:150px}}
+
+
+/* Focused practice library and readable revision states */
+.practice-workspace{display:grid;gap:20px;min-width:0}
+.practice-library{padding:22px;background:#fff;border:1px solid #e3e9f1;border-radius:18px}
+.practice-library-heading{display:flex;justify-content:space-between;align-items:flex-start;gap:18px}
+.practice-library-heading h2{font:800 23px Manrope,sans-serif;letter-spacing:-.6px;margin:7px 0;color:#1d2c46}
+.practice-library-heading p{margin:0;color:#7b879b;font-size:13px;line-height:1.6}
+.practice-library-actions,.practice-top-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.practice-library-actions button,.practice-top-actions button{white-space:nowrap}
+.bank-filter-row{display:grid;grid-template-columns:minmax(220px,1fr) minmax(150px,220px) minmax(150px,220px);gap:10px;margin:20px 0 16px}
+.bank-filter-row label{display:flex;align-items:center;gap:8px;min-width:0;border:1px solid #e1e7ef;border-radius:10px;padding:0 12px;color:#8792a7}
+.bank-filter-row input,.bank-filter-row select{width:100%;min-width:0;border:1px solid #e1e7ef;border-radius:10px;padding:11px 12px;background:#fbfcfe;color:#39465f;outline-color:#6685e8;font-size:12px}
+.bank-filter-row label input{border:0;padding:11px 0;background:transparent;outline:none}
+.practice-bank-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.practice-bank-card{display:flex;flex-direction:column;align-items:stretch;min-width:0;padding:16px;border:1px solid #e1e8f0;border-radius:14px;background:linear-gradient(180deg,#fff,#fbfcff);transition:border-color .18s,box-shadow .18s}
+.practice-bank-card:hover,.practice-bank-card.selected{border-color:#91a8ef;box-shadow:0 8px 24px #284c9710}
+.practice-bank-card-top{display:flex;justify-content:space-between;gap:8px;color:#6176b4;font-size:10px;font-weight:800}
+.practice-bank-card-top span:last-child{background:#f0f3fa;border-radius:6px;padding:4px 7px;color:#68758c}
+.practice-bank-card h3{font:750 15px/1.4 Manrope,sans-serif;margin:13px 0 5px;color:#283750;overflow-wrap:anywhere}
+.practice-bank-card>p{margin:0;color:#7e899e;font-size:11px;line-height:1.5}
+.practice-bank-meta{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;margin:16px 0;color:#73819a;font-size:10px}
+.practice-bank-meta span{display:flex;align-items:center;gap:5px}
+.practice-bank-card>.primary{width:100%;margin-top:auto}
+.empty-bank-state{display:flex;align-items:center;flex-direction:column;text-align:center;padding:35px 16px;border:1px dashed #d9e2ef;border-radius:14px;background:#fafcff;color:#71809a}
+.empty-bank-state>svg{color:#5274d7}.empty-bank-state h3{margin:13px 0 5px;color:#293953}.empty-bank-state p{max-width:400px;font-size:12px;line-height:1.7;margin:0 0 16px}
+.practice-top-actions{justify-content:flex-end}.practice-top-actions>span{color:#65738d;font-size:12px;margin-right:4px}
+.bookmark-btn.bookmarked{color:#2758c7;border-color:#b7c7fa;background:#eef3ff}
+.practice h2{font-size:clamp(20px,2.2vw,27px);line-height:1.55;color:#1f2f49;overflow-wrap:anywhere}
+.practice .option{font-size:15px;line-height:1.6;padding:15px 16px;align-items:flex-start}
+.practice .option span{flex:0 0 30px}
+.answer-panel{margin-top:24px;border:1px solid #d7e7e1;border-radius:16px;overflow:hidden;background:#fff;box-shadow:0 8px 24px #243f4b0a}
+.answer-panel.correct{border-color:#a8d8c0;background:#fff;color:#254c3c}
+.answer-panel.wrong{border-color:#f0c9b5;background:#fff;color:#6e3d29}
+.answer-heading{display:flex;align-items:flex-start;gap:12px;padding:18px 20px;background:#f0faf5;border-bottom:1px solid #dceee5;color:#26734f}
+.answer-panel.wrong .answer-heading{background:#fff6f0;border-color:#f4e0d5;color:#a4562d}
+.answer-heading>svg{flex-shrink:0;margin-top:2px}
+.answer-heading>div{display:grid;gap:5px}
+.answer-heading b{font:800 16px Manrope,sans-serif}
+.answer-heading span{font-size:13px;line-height:1.6;color:#425a60}
+.answer-explanation{padding:20px 22px 22px;background:#fff}
+.answer-explanation h3{font:800 16px Manrope,sans-serif;color:#233f51;margin:0 0 10px}
+.answer-explanation p{font-size:15px;line-height:1.85;color:#405266;margin:0;white-space:pre-wrap;overflow-wrap:anywhere}
+.practice-workspace.is-fullscreen{position:fixed;inset:0;z-index:1000;overflow:auto;background:#f4f6fb;padding:18px clamp(12px,3vw,42px) 32px;display:block}
+.practice-workspace.is-fullscreen .practice-library{max-width:1500px;margin:0 auto 18px}
+.practice-workspace.is-fullscreen>.practice{max-width:1120px;margin:0 auto 24px;box-shadow:0 10px 35px #25395c12}
+body.practice-fullscreen-active{overflow:hidden}
+.practice-workspace.is-fullscreen .practice .option{padding:18px 20px;font-size:16px}
+.practice-workspace.is-fullscreen .answer-explanation p{font-size:16px;line-height:1.9}
+@media(max-width:950px){.practice-bank-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.bank-filter-row{grid-template-columns:1fr 1fr}.bank-filter-row label{grid-column:1/-1}}
+@media(max-width:620px){.practice-library{padding:15px}.practice-library-heading{flex-direction:column}.practice-library-heading h2{font-size:20px}.practice-library-actions{width:100%}.practice-library-actions button{flex:1}.bank-filter-row{grid-template-columns:1fr}.bank-filter-row label{grid-column:auto}.practice-bank-grid{grid-template-columns:1fr}.practice-head{align-items:flex-start;gap:12px;flex-direction:column}.practice-top-actions{justify-content:flex-start}.practice-actions>*{flex:1}.answer-heading{padding:15px}.answer-explanation{padding:16px}.answer-explanation p{font-size:14px}}
+@media print{.sidebar,.topbar,.notice,.practice-library,.practice-actions,.practice-top-actions,.progress{display:none!important}.main{max-width:none;padding:0}.panel,.answer-panel{box-shadow:none;border:0}.answer-explanation p{font-size:12pt;line-height:1.6}}
