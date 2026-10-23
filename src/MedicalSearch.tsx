@@ -110,6 +110,21 @@ export default function MedicalSearch() {
   const [guidelines, setGuidelines] = useState<Article[]>([]);
   const [wiki, setWiki] = useState<WikiItem[]>([]);
   const [images, setImages] = useState<ImageItem[]>([]);
+  const [studyTool, setStudyTool] = useState<"flashcards" | "compare" | "flowchart">("flashcards");
+  const [cardQuestion, setCardQuestion] = useState("");
+  const [cardAnswer, setCardAnswer] = useState("");
+  const [flashcards, setFlashcards] = useState<Array<{ question: string; answer: string }>>([]);
+  const [revealedCards, setRevealedCards] = useState<number[]>([]);
+
+  function addFlashcard(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const question = cardQuestion.trim();
+    const answer = cardAnswer.trim();
+    if (!question || !answer) return;
+    setFlashcards((current) => [...current, { question, answer }]);
+    setCardQuestion("");
+    setCardAnswer("");
+  }
 
   async function search(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -194,13 +209,40 @@ export default function MedicalSearch() {
         </section>
 
         <section className="medsearch-section" id="study-tools">
-          <div className="medsearch-section-title"><span className="medsearch-icon violet"><Brain size={19}/></span><div><h3>Study tools</h3><p>Source-linked learning modules</p></div></div>
-          <div className="medsearch-study-grid">
-            <article><GitBranch/><h4>Flowcharts</h4><p>Build diagnostic and management pathways from verified recommendations, with source links on decision nodes.</p><span>Evidence-linked diagrams</span></article>
-            <article><Layers/><h4>Comparison tables</h4><p>Organize criteria, differential diagnoses, staging, and treatment comparisons with context and citations.</p><span>Source-linked tables</span></article>
-            <article><ClipboardList/><h4>Flashcards and questions</h4><p>Create original revision cards and exam-style questions from reviewed topic material, not copied question banks.</p><span>NEET-PG · INI-CET · MECEE-PG · USMLE</span></article>
+          <div className="medsearch-section-title"><span className="medsearch-icon violet"><Brain size={19}/></span><div><h3>Study tools</h3><p>Working tools for {activeQuery} · outputs are based on search metadata or notes you enter</p></div></div>
+          <div className="medsearch-tool-tabs" role="tablist" aria-label="Choose study tool">
+            <button type="button" role="tab" aria-selected={studyTool === "flashcards"} className={studyTool === "flashcards" ? "active" : ""} onClick={() => setStudyTool("flashcards")}><ClipboardList size={16}/> Flashcards</button>
+            <button type="button" role="tab" aria-selected={studyTool === "compare"} className={studyTool === "compare" ? "active" : ""} onClick={() => setStudyTool("compare")}><Layers size={16}/> Compare papers</button>
+            <button type="button" role="tab" aria-selected={studyTool === "flowchart"} className={studyTool === "flowchart" ? "active" : ""} onClick={() => setStudyTool("flowchart")}><GitBranch size={16}/> Evidence flow</button>
           </div>
-          <p className="medsearch-source-note">These study modules are roadmap placeholders in this version, not generated clinical guidance. They will be enabled after source verification and citation checks are implemented.</p>
+          {studyTool === "flashcards" && <div className="medsearch-tool-panel">
+            <h4>Create revision flashcards</h4>
+            <p className="medsearch-source-note">Write answers from material you have reviewed. Cards are kept in this page session; source claims should be checked against the linked paper or guideline.</p>
+            <form className="medsearch-flashcard-form" onSubmit={addFlashcard}>
+              <label>Question or prompt<input value={cardQuestion} onChange={(e) => setCardQuestion(e.target.value)} placeholder={`e.g. What population does this ${activeQuery} paper study?`} maxLength={300} required /></label>
+              <label>Answer / key points<textarea value={cardAnswer} onChange={(e) => setCardAnswer(e.target.value)} placeholder="Add your own notes and key points…" maxLength={1500} rows={3} required /></label>
+              <button type="submit">Add flashcard</button>
+            </form>
+            <div className="medsearch-flashcard-toolbar"><strong>{flashcards.length} cards</strong><span>Tap a card to reveal or hide the answer</span></div>
+            {flashcards.length ? <div className="medsearch-flashcard-list">{flashcards.map((card, index) => <button type="button" className="medsearch-flashcard" key={index} onClick={() => setRevealedCards((current) => current.includes(index) ? current.filter((n) => n !== index) : [...current, index])}><span> CARD {index + 1} · {revealedCards.includes(index) ? "ANSWER" : "QUESTION"}</span><strong>{revealedCards.includes(index) ? card.answer : card.question}</strong><small>{revealedCards.includes(index) ? "Tap to hide answer" : "Tap to reveal answer"}</small></button>)}</div> : <p className="medsearch-empty">No cards yet. Add a question and answer above to create your first revision card.</p>}
+          </div>}
+          {studyTool === "compare" && <div className="medsearch-tool-panel">
+            <h4>Compare search results</h4>
+            <p className="medsearch-source-note">This table compares indexed metadata only, not clinical outcomes or study quality. Open each source and read the abstract/full text before drawing conclusions.</p>
+            {articles.length ? <div className="medsearch-comparison-wrap"><table className="medsearch-comparison-table"><thead><tr><th>Paper</th><th>Journal</th><th>Publication date</th><th>Source</th></tr></thead><tbody>{articles.map((article) => <tr key={article.id}><td>{article.title}</td><td>{article.journal || "Not listed"}</td><td>{article.date || "Not listed"}</td><td><a href={article.url} target="_blank" rel="noreferrer">PubMed ↗</a></td></tr>)}</tbody></table></div> : <p className="medsearch-empty">No paper records to compare yet. Search a topic with PubMed results first.</p>}
+          </div>}
+          {studyTool === "flowchart" && <div className="medsearch-tool-panel">
+            <h4>Evidence review flow for {activeQuery}</h4>
+            <p className="medsearch-source-note">This is a study workflow for evaluating sources, not a diagnostic or treatment algorithm.</p>
+            <ol className="medsearch-evidence-flow">
+              <li><strong>1. Define the question</strong><span>Specify population, clinical problem, intervention/exposure, comparator, and outcome where relevant.</span></li>
+              <li><strong>2. Find current guidance</strong><span>Check the issuing body, jurisdiction, intended population, publication date, and update status.</span></li>
+              <li><strong>3. Appraise the paper</strong><span>Review design, sample, methods, bias, effect estimates, uncertainty, and limitations in the original source.</span></li>
+              <li><strong>4. Check applicability</strong><span>Compare the study population and setting with the question and local clinical context.</span></li>
+              <li><strong>5. Record a qualified takeaway</strong><span>Summarize only what the source supports, note uncertainty, and keep a citation to the original record.</span></li>
+            </ol>
+            <div className="medsearch-flow-sources"><strong>Start with this topic's sources:</strong>{articles.slice(0, 3).map((article) => <a key={article.id} href={article.url} target="_blank" rel="noreferrer">{article.title} ↗</a>)}{guidelines.slice(0, 2).map((article) => <a key={article.id} href={article.url} target="_blank" rel="noreferrer">Guideline record: {article.title} ↗</a>)}{articles.length === 0 && guidelines.length === 0 && <span>No indexed records returned. Use the official guideline portals above.</span>}</div>
+          </div>}
         </section>
       </>}
 
