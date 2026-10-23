@@ -2,7 +2,7 @@ import React, { useState, type FormEvent } from "react";
 import { Activity, ArrowLeft, BookOpen, ExternalLink, Image as ImageIcon, Search, ShieldCheck } from "lucide-react";
 
 type Article = { id: string; title: string; journal?: string; date?: string; url: string; abstract?: string };
-type WikiItem = { title: string; extract: string; url: string };
+type WikiItem = { title: string; extract: string; url: string; thumbnail?: string };
 type ImageItem = { title: string; thumb: string; page: string; license: string; artist: string; credit: string };
 
 const endpoint = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/";
@@ -38,11 +38,28 @@ async function getWikipedia(query: string): Promise<WikiItem[]> {
   const response = await fetch(url);
   if (!response.ok) throw new Error("Wikipedia search is unavailable right now.");
   const data = await response.json();
-  return (data?.query?.search || []).map((item: { title: string; snippet: string }) => ({
+  const results: WikiItem[] = (data?.query?.search || []).map((item: { title: string; snippet: string }) => ({
     title: item.title,
     extract: String(item.snippet || "").replace(/<[^>]+>/g, "").replace(/&quot;/g, '"').replace(/&#039;/g, "'"),
     url: "https://en.wikipedia.org/wiki/" + encodeURIComponent(item.title.replace(/ /g, "_")),
   }));
+
+  // Fetch thumbnails for the same Wikipedia pages so every image links back to its article.
+  if (results.length) {
+    const imageUrl = new URL("https://en.wikipedia.org/w/api.php");
+    imageUrl.search = new URLSearchParams({
+      action: "query", prop: "pageimages", titles: results.map((item) => item.title).join("|"),
+      piprop: "thumbnail", pithumbsize: "640", format: "json", origin: "*",
+    }).toString();
+    const imageResponse = await fetch(imageUrl);
+    if (imageResponse.ok) {
+      const imageData = await imageResponse.json();
+      const pages = Object.values(imageData?.query?.pages || {}) as Array<{ title?: string; thumbnail?: { source?: string } }>;
+      const thumbnails = new Map(pages.map((page) => [page.title, page.thumbnail?.source]));
+      return results.map((item) => ({ ...item, thumbnail: thumbnails.get(item.title) }));
+    }
+  }
+  return results;
 }
 
 async function getCommons(query: string): Promise<ImageItem[]> {
@@ -138,6 +155,11 @@ export default function MedicalSearch() {
         <section className="medsearch-section">
           <div className="medsearch-section-title"><span className="medsearch-icon teal"><ImageIcon size={19}/></span><div><h3>Educational images</h3><p>Wikimedia Commons · verify license before reuse</p></div><span className="medsearch-count">{images.length} results</span></div>
           {images.length ? <div className="medsearch-image-grid">{images.map((item) => <article className="medsearch-image-card" key={item.page}><a className="medsearch-image" href={item.page} target="_blank" rel="noreferrer"><img src={item.thumb} alt={item.title} loading="lazy"/></a><div className="medsearch-image-info"><h4><a href={item.page} target="_blank" rel="noreferrer">{item.title}</a></h4><p><strong>License:</strong> {item.license}</p><p><strong>Creator:</strong> {item.artist}</p><p><strong>Credit:</strong> {item.credit}</p><a className="medsearch-source-link" href={item.page} target="_blank" rel="noreferrer">Source & license ↗</a></div></article>)}</div> : <p className="medsearch-empty">No Commons images found for this query.</p>}
+        </section>
+
+        <section className="medsearch-section">
+          <div className="medsearch-section-title"><span className="medsearch-icon violet"><ImageIcon size={19}/></span><div><h3>Images from Wikipedia</h3><p>Article thumbnails · tap an image to open its Wikipedia page</p></div><span className="medsearch-count">{wiki.filter((item) => item.thumbnail).length} images</span></div>
+          {wiki.some((item) => item.thumbnail) ? <div className="medsearch-image-grid">{wiki.filter((item) => item.thumbnail).map((item) => <article className="medsearch-image-card" key={item.url}><a className="medsearch-image" href={item.url} target="_blank" rel="noreferrer" aria-label={`Open Wikipedia article: ${item.title}`}><img src={item.thumbnail} alt={item.title} loading="lazy"/></a><div className="medsearch-image-info"><h4><a href={item.url} target="_blank" rel="noreferrer">{item.title} <ExternalLink size={13}/></a></h4><p>Image thumbnail from the linked Wikipedia article.</p><a className="medsearch-source-link" href={item.url} target="_blank" rel="noreferrer">Open Wikipedia page ↗</a></div></article>)}</div> : <p className="medsearch-empty">No article thumbnails are available for this search. Open a topic result above to explore its page.</p>}
         </section>
       </>}
 
