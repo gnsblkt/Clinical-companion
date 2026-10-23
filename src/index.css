@@ -33,3 +33,5 @@
 .medsearch-section[id]{scroll-margin-top:84px}
 @media(max-width:760px){.medsearch-guideline-grid,.medsearch-study-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.medatlas-workspace-nav{top:4px}}
 @media(max-width:480px){.medsearch-guideline-grid,.medsearch-study-grid{grid-template-columns:1fr}.medatlas-workspace-nav{gap:6px;padding:7px}.medatlas-workspace-nav a{font-size:11px;padding:8px 9px}}
+
+.medsearch-image-search-links{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:14px 16px;margin:12px 0 16px;border:1px solid #dfe9ed;border-radius:12px;background:#f8fbfc}.medsearch-image-search-links a{display:inline-flex;align-items:center;padding:9px 12px;border:1px solid #dce8eb;border-radius:9px;background:#fff;color:#176b61;font-size:12px;font-weight:800;text-decoration:none}.medsearch-image-search-links a:hover{border-color:#9ed5c7}.medsearch-image-search-links p{flex-basis:100%;margin:0;color:#748493;font-size:11px;line-height:1.55}@media(max-width:480px){.medsearch-image-search-links{align-items:stretch;flex-direction:column}.medsearch-image-search-links a{justify-content:center}}
