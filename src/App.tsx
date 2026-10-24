@@ -82,7 +82,8 @@ export default function App() {
  setBanks(next);setSelectedBankId(bank.id);setQuestions(parsed);setIndex(0);setChoice(null);setShow(false);setMessage("Saved "+parsed.length+" questions under "+examAuthority+" · "+examYear+".");setTab("Practice");setImportProgress(100);}catch(e){setMessage(e instanceof Error?e.message:"Could not parse CSV.");}finally{setImportBusy(false);}};reader.readAsText(file);}
  function selectBank(id:string){const bank=banks.find(b=>b.id===id);if(!bank)return;setSelectedBankId(id);localStorage.setItem("clinical-selected-bank",id);setQuestions(bank.questions);localStorage.setItem("mam-questions",JSON.stringify(bank.questions));setIndex(0);setChoice(practiceAnswers[id+":0"]??null);setShow(false);setShowResults(false);setTab("Practice");}
  function deleteBank(id:string){const next=banks.filter(b=>b.id!==id);setBanks(next);localStorage.setItem("clinical-exam-banks",JSON.stringify(next));if(selectedBankId===id){setSelectedBankId("");const fallback=next[0];if(fallback)selectBank(fallback.id);else{setQuestions(demo);localStorage.setItem("mam-questions",JSON.stringify(demo));}}}
- function setTheme(value:string){setStudyTheme(value);localStorage.setItem("clinical-study-theme",value);}\n function saveNotes(value: string) { setNotes(value); localStorage.setItem("mam-notes-text", value); }
+ function setTheme(value:string){setStudyTheme(value);localStorage.setItem("clinical-study-theme",value);}
+ function saveNotes(value: string) { setNotes(value); localStorage.setItem("mam-notes-text", value); }
  async function sendChat(e: React.FormEvent) { e.preventDefault(); const prompt=questionText.trim(); if(!prompt||chatBusy)return;
  if(!apiKey.trim()){setApiSettings(true);setMessage("Add your Groq API key in API settings to enable live AI chat.");return;}
  const threadId=activeThreadId||crypto.randomUUID();if(!activeThreadId)setActiveThreadId(threadId);
