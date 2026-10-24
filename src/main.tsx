@@ -1,6 +1,7 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
 import App from "./App";
+import MedicalSearch from "./MedicalSearch";
 import "./index.css";
 
 class AppErrorBoundary extends React.Component<React.PropsWithChildren, { error: string | null }> {
@@ -32,7 +33,7 @@ if (!root) throw new Error('Root element "#root" was not found.');
 createRoot(root).render(
   <React.StrictMode>
     <AppErrorBoundary>
-      <App />
+      {new URLSearchParams(window.location.search).get("tool") === "medical-search" ? <MedicalSearch /> : <App /> }
     </AppErrorBoundary>
   </React.StrictMode>
 );
