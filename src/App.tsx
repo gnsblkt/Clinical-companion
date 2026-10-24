@@ -123,4 +123,5 @@ export default function App() {
  </section>}
  <footer>Clinical Companion AI · Medical study tool · Not for clinical decision-making</footer></main></div>;
 }
-function CheckIcon(){return <span aria-hidden="true">✓</span>}\nfunction MenuIcon(){return <Menu size={19}/>}
+function CheckIcon(){return <span aria-hidden="true">✓</span>}
+function MenuIcon(){return <Menu size={19}/>}
