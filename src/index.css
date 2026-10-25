@@ -585,3 +585,95 @@ body.practice-fullscreen-active{overflow:hidden}
 .app-shell .practice .options .option.wrong-option{border:2px solid #ef4444!important;background-color:rgba(239,68,68,.14)!important}
 .app-shell .practice .options .option.wrong-option>span{background:#ef4444!important;color:#fff!important}
 .app-shell .practice .answer-panel{scroll-margin-top:20px}
+
+
+/* Clinical Companion responsive workspace, readable study content, and PWA navigation */
+.mobile-bottom-nav{display:none}
+.practice-library-heading{align-items:center}
+.practice-library-actions{display:flex;flex-direction:row;gap:8px;flex-wrap:wrap}
+.filter-chip{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:1px solid #dce5f2;background:#fff;color:#53647c;border-radius:999px;padding:8px 13px;font-size:12px;font-weight:700;white-space:nowrap}
+.filter-chip.active,.filter-chip:focus-visible{background:#eaf1ff;border-color:#2563eb;color:#2456c6}
+.practice-library{max-width:1120px;margin:0 auto 24px}
+.practice-bank-grid{grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+.practice-head{align-items:center;gap:12px;flex-wrap:wrap}
+.back-to-library{flex-shrink:0}
+.formatted-note,.flashcard-markdown{min-width:0;max-width:100%;line-height:1.75;overflow-wrap:anywhere;word-break:break-word}
+.formatted-note h1,.formatted-note h2,.formatted-note h3,.flashcard-markdown h1,.flashcard-markdown h2,.flashcard-markdown h3{font-family:Manrope,system-ui,sans-serif;line-height:1.35;margin:1.1em 0 .55em}
+.formatted-note p,.formatted-note li,.flashcard-markdown p,.flashcard-markdown li{overflow-wrap:anywhere;word-break:break-word}
+.formatted-note ul,.formatted-note ol,.flashcard-markdown ul,.flashcard-markdown ol{padding-left:22px}
+.formatted-note table,.flashcard-markdown table{display:block;max-width:100%;overflow-x:auto;border-collapse:collapse}
+.formatted-note th,.formatted-note td,.flashcard-markdown th,.flashcard-markdown td{border:1px solid #d8e1ed;padding:8px;text-align:left;vertical-align:top}
+.formatted-note blockquote,.flashcard-markdown blockquote{border-left:3px solid #2563eb;background:#f5f8ff;padding:8px 14px;margin:12px 0}
+.notes-panel .formatted-note{min-height:300px;padding:18px;border:1px solid #e4eaf3;border-radius:12px;background:#fff}
+.empty-notes{color:#8a96a8}
+.flashcard-item{min-width:0}
+.flashcard-markdown{padding:4px 0}
+.flashcard-item details{margin-top:12px}
+.flashcard-item details[open]{padding-top:12px;border-top:1px solid #e4eaf2}
+.markdown-body{font-family:Georgia,'Times New Roman',serif;font-size:11pt;line-height:1.65;overflow-wrap:anywhere}
+.markdown-body h1,.markdown-body h2,.markdown-body h3{font-family:Inter,Arial,sans-serif;color:#173b57;break-after:avoid}
+.markdown-body h1{font-size:22pt;border-bottom:2px solid #2563eb;padding-bottom:8pt}
+.markdown-body h2{font-size:15pt;border-bottom:1px solid #d8e3ee;padding-bottom:4pt}
+.markdown-body h3{font-size:12pt}
+.markdown-body p,.markdown-body li{orphans:3;widows:3}
+.markdown-body table{width:100%;border-collapse:collapse;font-size:10pt;margin:12pt 0}
+.markdown-body th,.markdown-body td{border:1px solid #cbd5e1;padding:6pt;text-align:left;vertical-align:top}
+.markdown-body th{background:#eef4fb}
+.markdown-body blockquote{border-left:3px solid #2563eb;background:#f3f7ff;margin:12pt 0;padding:8pt 12pt;break-inside:avoid}
+@media(min-width:768px){
+ .app-shell{grid-template-columns:240px minmax(0,1fr)}
+ .sidebar{position:sticky;top:0;height:100vh;min-height:100vh;overflow-y:auto}
+ .main{max-width:1024px;padding:32px clamp(24px,3vw,44px);min-width:0}
+ .mobile-bottom-nav{display:none!important}
+ .practice-workspace{max-width:1120px;margin:0 auto}
+}
+@media(max-width:767px){
+ body{padding-bottom:calc(66px + env(safe-area-inset-bottom))}
+ .app-shell{display:block;min-height:100vh}
+ .sidebar{display:none!important}
+ .main{padding:10px 12px 22px;max-width:100%;width:100%;margin:0}
+ .topbar{position:sticky;top:0;z-index:30;height:52px;min-height:52px;display:flex;flex-direction:row;align-items:center;justify-content:space-between;gap:8px;margin:-10px -12px 14px;padding:0 12px;background:#fff;border-bottom:1px solid #e5eaf2}
+ .workspace-title{display:flex;align-items:center;gap:8px;min-width:0}
+ .workspace-title .eyebrow{display:none}
+ .topbar h1{font:800 16px/1.2 Manrope,sans-serif;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+ .theme-controls{display:flex;gap:3px;flex-shrink:0}
+ .theme-controls button{min-width:29px;padding:5px;border-radius:8px}
+ .mobile-bottom-nav{position:fixed;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));left:0;right:0;bottom:0;z-index:1000;min-height:60px;padding:5px 4px calc(5px + env(safe-area-inset-bottom));background:rgba(255,255,255,.97);border-top:1px solid #dce4ee;box-shadow:0 -5px 22px rgba(25,45,75,.08);backdrop-filter:blur(14px)}
+ .mobile-bottom-nav button{display:flex;min-width:0;flex-direction:column;align-items:center;justify-content:center;gap:3px;border:0;border-radius:9px;background:transparent;color:#718096;padding:4px 1px}
+ .mobile-bottom-nav button span{font-size:17px;line-height:1}
+ .mobile-bottom-nav button small{font-size:9px;line-height:1.1;font-weight:700;white-space:nowrap}
+ .mobile-bottom-nav button.active{background:#eaf1ff;color:#2459ca}
+ .hero{gap:8px;padding:20px 16px}
+ .hero h2{font-size:27px;letter-spacing:-.7px}
+ .stats{grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+ .stat{min-width:0;padding:10px}
+ .stat b{font-size:16px}
+ .stat span{font-size:10px;overflow-wrap:anywhere}
+ .quick-grid{grid-template-columns:1fr}
+ .practice-library-heading{display:block}
+ .practice-library-heading>div:first-child h2{font-size:21px}
+ .practice-library-actions{display:flex;flex-direction:row;flex-wrap:nowrap;overflow-x:auto;padding:4px 0 8px;margin:10px 0;scrollbar-width:thin}
+ .filter-chip{flex:0 0 auto;padding:8px 11px;font-size:11px}
+ .bank-filter-row{display:flex;flex-wrap:wrap;gap:8px}
+ .bank-filter-row label{flex:1 1 100%;min-width:0}
+ .bank-filter-row select{flex:1 1 45%;min-width:0}
+ .practice-bank-grid{grid-template-columns:1fr}
+ .practice-bank-card{min-width:0}
+ .practice-head{display:flex;align-items:flex-start}
+ .back-to-library{order:-1;width:100%;justify-content:flex-start}
+ .practice h2{font-size:19px;line-height:1.45}
+ .practice-actions>*{flex:1 1 auto}
+ .notes-heading{align-items:flex-start;flex-direction:column;gap:12px}
+ .notes-export-actions{display:flex;flex-wrap:wrap;width:100%}
+ .notes-export-actions button{flex:1 1 auto}
+ .notes-panel textarea{min-height:55vh}
+ .formatted-note{padding:12px!important}
+ .explanation-callout,.explanation-sections,.explanation-callout p,.explanation-callout li,.explanation-callout ul,.explanation-callout ol,.explanation-sections p,.explanation-sections li{overflow-wrap:anywhere;word-break:break-word;max-width:100%;box-sizing:border-box}
+ .explanation-callout ul ul,.explanation-callout ol ol,.explanation-callout ul ol,.explanation-callout ol ul,.explanation-sections ul ul,.explanation-sections ol ol{padding-left:14px!important;margin-left:0!important}
+ .explanation-callout ul,.explanation-callout ol,.explanation-sections ul,.explanation-sections ol{padding-left:14px!important;margin-left:0!important}
+ .panel{padding:15px}
+ .chat-app-shell{min-width:0}
+ .chat-layout{grid-template-columns:minmax(0,1fr)}
+ .markdown-answer ul,.markdown-answer ol{padding-left:14px!important;margin-left:0!important}
+ .markdown-answer li,.markdown-answer p,.markdown-answer h1,.markdown-answer h2,.markdown-answer h3{max-width:100%;overflow-wrap:anywhere;word-break:break-word}
+}
