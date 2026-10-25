@@ -1,5 +1,5 @@
 const CACHE_NAME = "clinical-companion-shell-v1";
-const APP_SHELL = ["/", "/manifest.webmanifest", "/icon-192.png", "/icon-512.png"];
+const APP_SHELL = ["/", "/manifest.webmanifest", "/icon.svg"];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
@@ -35,7 +35,7 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  if (url.pathname.startsWith("/assets/") || ["/manifest.webmanifest", "/icon-192.png", "/icon-512.png"].includes(url.pathname)) {
+  if (url.pathname.startsWith("/assets/") || ["/manifest.webmanifest", "/icon.svg"].includes(url.pathname)) {
     event.respondWith(
       caches.match(request).then((cached) => {
         const network = fetch(request).then((response) => {
