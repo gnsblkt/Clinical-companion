@@ -572,3 +572,16 @@ body.practice-fullscreen-active{overflow:hidden}
 .study-bridge-actions{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}.study-bridge-actions .primary,.study-bridge-actions .secondary{min-height:38px;border-radius:999px;padding:8px 14px;font-size:13px;font-weight:650}
 .saved-bookmarks-panel{margin:12px 0;padding:14px;border:1px solid var(--border-color);border-radius:14px;background:var(--bg-card);color:var(--text-main)}.saved-bookmarks-panel h3{margin:0 0 10px;color:var(--text-main)}.saved-bookmark-row{display:flex;gap:10px;align-items:flex-start;justify-content:space-between;padding:9px 0;border-top:1px solid var(--border-color)}.saved-bookmark-row .text-action{text-align:left;color:var(--text-main);overflow-wrap:anywhere}.nav-count{margin-left:auto;border-radius:999px;padding:2px 7px;background:var(--bg-subtle);color:var(--text-main);font-size:11px}.flashcard-item{margin:12px 0;padding:16px;border:1px solid var(--border-color);border-radius:14px;background:var(--bg-card);color:var(--text-main)}.flashcard-item h3{color:var(--text-main)}.flashcard-item summary{cursor:pointer;font-weight:650;color:var(--text-main);padding:8px 0}.flashcard-item p{white-space:pre-wrap;line-height:1.7;color:var(--text-main)}
 .app-shell.theme-dark .saved-bookmarks-panel,.app-shell.theme-dark .flashcard-item{background:var(--bg-card);color:var(--text-main);border-color:var(--border-color)}
+
+
+/* Practice MCQ answer feedback: keep state styling above theme overrides. */
+.app-shell .practice .question-grid-toggle{position:sticky;top:0;z-index:20;background:var(--bg-card)!important;padding:12px 0!important;border-bottom:1px solid var(--border-color);margin-bottom:16px;isolation:isolate}
+.app-shell .practice .question-stem{padding-top:12px;margin-top:8px;scroll-margin-top:24px}
+.app-shell .practice .options .option{border:2px solid var(--border-color)}
+.app-shell .practice .options .option.chosen:not(.correct-option):not(.wrong-option){border:2px solid #2563eb!important;background-color:rgba(37,99,235,.1)!important}
+.app-shell .practice .options .option.chosen:not(.correct-option):not(.wrong-option)>span{background:#2563eb!important;color:#fff!important}
+.app-shell .practice .options .option.correct-option{border:2px solid #10b981!important;background-color:rgba(16,185,129,.14)!important}
+.app-shell .practice .options .option.correct-option>span{background:#10b981!important;color:#fff!important}
+.app-shell .practice .options .option.wrong-option{border:2px solid #ef4444!important;background-color:rgba(239,68,68,.14)!important}
+.app-shell .practice .options .option.wrong-option>span{background:#ef4444!important;color:#fff!important}
+.app-shell .practice .answer-panel{scroll-margin-top:20px}
