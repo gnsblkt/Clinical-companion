@@ -8,8 +8,7 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "lint": "eslint .",
-    "prebuild": "node scripts/generate-pwa-icons.mjs"
+    "lint": "eslint ."
   },
   "dependencies": {
     "@vitejs/plugin-react-swc": "^3.11.0",
