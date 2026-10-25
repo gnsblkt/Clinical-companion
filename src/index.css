@@ -677,3 +677,6 @@ body.practice-fullscreen-active{overflow:hidden}
  .markdown-answer ul,.markdown-answer ol{padding-left:14px!important;margin-left:0!important}
  .markdown-answer li,.markdown-answer p,.markdown-answer h1,.markdown-answer h2,.markdown-answer h3{max-width:100%;overflow-wrap:anywhere;word-break:break-word}
 }
+
+.mobile-header-logo{display:none;align-items:center;justify-content:center;width:30px;height:30px;border-radius:9px;background:#eaf1ff;color:#2563eb;flex-shrink:0}
+@media(max-width:767px){.mobile-header-logo{display:inline-flex}.topbar h1{font-size:15px}.workspace-title{flex:1}}
