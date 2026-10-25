@@ -680,3 +680,45 @@ body.practice-fullscreen-active{overflow:hidden}
 
 .mobile-header-logo{display:none;align-items:center;justify-content:center;width:30px;height:30px;border-radius:9px;background:#eaf1ff;color:#2563eb;flex-shrink:0}
 @media(max-width:767px){.mobile-header-logo{display:inline-flex}.topbar h1{font-size:15px}.workspace-title{flex:1}}
+
+
+/* MCQ editor, Cloudinary uploader and clinical image lightbox */
+.clinical-modal-backdrop{position:fixed;inset:0;z-index:1200;background:rgba(12,20,38,.68);display:flex;align-items:center;justify-content:center;padding:18px;backdrop-filter:blur(5px)}
+.clinical-editor-modal{width:min(900px,100%);max-height:min(92dvh,1000px);background:var(--panel,#fff);color:var(--text,#172033);border:1px solid rgba(148,163,184,.32);border-radius:20px;box-shadow:0 24px 80px rgba(0,0,0,.28);display:flex;flex-direction:column;overflow:hidden}
+.clinical-editor-modal>header{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:20px 24px;border-bottom:1px solid #e5eaf2;background:var(--panel,#fff)}
+.clinical-editor-modal h2{margin:4px 0 0;font-size:21px;line-height:1.25}
+.clinical-editor-modal>p,.clinical-editor-help{font-size:12px;line-height:1.55;color:#718096}
+.cloudinary-settings-modal{width:min(540px,100%);padding-bottom:18px}
+.cloudinary-settings-modal>p,.cloudinary-settings-modal>label{margin-left:22px;margin-right:22px}
+.clinical-editor-scroll{padding:20px 24px;overflow:auto;display:grid;gap:18px}
+.clinical-editor-modal label{display:grid;gap:7px;font-size:13px;font-weight:700;color:inherit}
+.clinical-editor-modal input:not([type=file]):not([type=checkbox]),.clinical-editor-modal textarea,.clinical-editor-modal select{width:100%;min-width:0;border:1px solid #d7deea;border-radius:10px;background:#fff;color:#182235;padding:11px 12px;outline:none;font-size:14px;font-weight:400}
+.clinical-editor-modal textarea{resize:vertical;line-height:1.6;min-height:90px}
+.clinical-editor-modal input:focus,.clinical-editor-modal textarea:focus,.clinical-editor-modal select:focus{border-color:#3b82f6;box-shadow:0 0 0 3px rgba(59,130,246,.12)}
+.clinical-editor-help{font-weight:400}
+.clinical-upload-zone{border:1px dashed #b8c7dd;background:#f8faff;border-radius:14px;padding:14px;display:grid;gap:13px;min-width:0}
+.clinical-upload-buttons{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.upload-file-label{display:inline-flex!important;align-items:center;justify-content:center;border:1px solid #d7deea;border-radius:10px;padding:10px 12px;cursor:pointer;background:white;font-weight:700!important}
+.upload-file-label input[type=file]{display:none}
+.clinical-image-preview{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.clinical-image-preview img{width:auto;max-width:min(240px,100%);height:auto;max-height:180px;object-fit:contain;border:1px solid #dbe2ee;border-radius:10px;background:#fff;cursor:zoom-in}
+.inline-image-check{display:flex!important;grid-template-columns:18px 1fr;align-items:center;gap:8px!important}
+.inline-image-check input{width:16px;height:16px}
+.clinical-option-editor{border:1px solid #e1e7f0;border-radius:14px;padding:15px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.clinical-option-editor legend{padding:0 8px;font-size:13px;font-weight:800}
+.clinical-option-editor>label:last-child{grid-column:1/-1}
+.clinical-editor-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:16px 24px;border-top:1px solid #e5eaf2;background:var(--panel,#fff)}
+.clinical-editor-actions>span{font-size:12px;color:#059669}
+.clinical-upload-progress{display:flex;align-items:center;gap:12px;font-size:13px;font-weight:700;color:#2563eb}
+.clinical-upload-progress progress{width:140px;height:8px}
+.clinical-upload-error{margin:0;padding:10px 12px;border-radius:10px;background:#fff1f2;color:#be123c;font-size:13px}
+.clinical-lightbox{position:fixed;inset:0;z-index:1300;background:rgba(3,7,18,.96);display:flex;align-items:center;justify-content:center;padding:56px 18px 24px}
+.clinical-lightbox img{max-width:100%;max-height:100%;object-fit:contain;border-radius:8px;cursor:zoom-out}
+.clinical-lightbox-close{position:absolute;top:16px;right:18px;width:44px;height:44px;border-radius:50%;border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.12);color:#fff;font-size:24px}
+.clinical-question-image,.clinical-explanation-image{display:block;max-width:100%;width:auto;height:auto;max-height:24rem;margin:14px auto;object-fit:contain;border:1px solid #dbe2ee;border-radius:12px;box-shadow:0 4px 16px rgba(15,23,42,.08);cursor:zoom-in}
+.clinical-explanation-image{max-height:30rem}
+.markdown-question-stem{line-height:1.75}
+.markdown-question-stem p{margin:0 0 10px}
+.export-updated-csv{margin-top:8px;width:100%}
+.cloudinary-header-button{font-size:17px!important;min-width:34px}
+@media(max-width:640px){.clinical-modal-backdrop{padding:0;align-items:flex-end}.clinical-editor-modal{max-height:96dvh;border-radius:20px 20px 0 0;width:100%}.clinical-editor-modal>header{padding:16px}.clinical-editor-modal h2{font-size:18px}.clinical-editor-scroll{padding:16px;gap:15px}.clinical-editor-actions{padding:12px 16px}.clinical-editor-actions button{flex:1;min-width:calc(50% - 8px)}.clinical-option-editor{grid-template-columns:minmax(0,1fr)}.clinical-option-editor>label:last-child{grid-column:auto}.clinical-upload-buttons{align-items:flex-start;flex-direction:column}.clinical-question-image{max-height:20rem}.clinical-explanation-image{max-height:24rem}.cloudinary-settings-modal{padding-bottom:16px}.cloudinary-settings-modal>p,.cloudinary-settings-modal>label{margin-left:16px;margin-right:16px}}
