@@ -746,3 +746,47 @@ body.practice-fullscreen-active{overflow:hidden}
 .app-shell .practice-workspace{background:transparent}.app-shell .practice-actions{display:grid;grid-template-columns:minmax(66px,auto) minmax(130px,1.4fr) minmax(66px,auto);gap:8px}.app-shell .practice-actions button{min-height:40px;padding:8px 12px;white-space:nowrap}.app-shell .practice-actions button:nth-child(2),.app-shell .practice-actions button:nth-child(5){display:none}.app-shell .practice-actions button:nth-child(4){grid-column:3}.app-shell .practice-top-actions{display:flex;flex-wrap:wrap;gap:6px}.app-shell .practice-top-actions .secondary{font-size:11px;padding:7px 9px}
 .app-shell .ai-tutor-card,.app-shell .ai-tutor-ask{background:var(--bg-muted);color:var(--text-primary);border-color:var(--border)}.app-shell .ai-tutor-card{border-left:4px solid var(--accent)}.app-shell .clinical-editor-modal input,.app-shell .clinical-editor-modal textarea,.app-shell .clinical-editor-modal select{background:var(--bg-muted);color:var(--text-primary);border-color:var(--border)}
 @media(max-width:767px){.app-shell .practice-workspace .practice-library,.app-shell .practice-workspace>.panel{border-left:0;border-right:0;border-radius:0;padding-left:16px;padding-right:16px}.app-shell .practice-bank-grid,.app-shell .practice-library{padding-left:0;padding-right:0}.app-shell .practice-actions{grid-template-columns:minmax(62px,.75fr) minmax(115px,1.4fr) minmax(62px,.75fr);gap:6px}.app-shell .practice-actions button{font-size:11px;padding:7px 6px;min-width:0}.app-shell .chat-app-shell{min-height:calc(100dvh - 58px)}.app-shell .chat-topbar{padding:0 8px}.app-shell .chat-theme-controls button{padding:5px}.app-shell .chat-new-compact{padding:5px 7px}.app-shell .chat-topbar-actions{gap:4px}}
+
+
+/* Mobile viewport, wrapping, theme contrast, and chat docking hardening */
+html,body,#root{width:100%;max-width:100%;margin:0;padding:0;overflow-x:clip;background:var(--bg-app,#f8fafc);color:var(--text-primary,#0f172a)}
+*,*::before,*::after{box-sizing:border-box}
+body{min-width:0}
+#root,.app-shell,.app-shell main,.main,.chat-app-shell,.chat-main-column,.chat-workspace,.chat-feed,.practice-workspace,.practice-library,.bank-card,.practice-bank-card,.notes-panel,.formatted-note{min-width:0;max-width:100%}
+.app-shell .bank-card-title,.app-shell .practice-bank-card h3,.app-shell .bank-card b,.app-shell .bank-card p,.app-shell .bank-card small,.app-shell .chat-item-title,.app-shell .sidebar-chat-item,.app-shell .chat-bubble,.app-shell .markdown-answer,.app-shell .notes-panel,.app-shell .formatted-note{overflow-wrap:anywhere;word-break:break-word}
+.app-shell .notes-panel,.app-shell .notes-panel textarea,.app-shell .formatted-note,.app-shell .formatted-note p,.app-shell .formatted-note li{background:var(--bg-card)!important;color:var(--text-primary)!important;border-color:var(--border)!important}
+.app-shell .notes-panel textarea{border:1px solid var(--border)!important}
+.app-shell .practice-library,.app-shell .practice-workspace,.app-shell .practice-library .search-wrapper,.app-shell .practice-library input[type=search],.app-shell .bank-form input,.app-shell .bank-form select{background:var(--bg-card);color:var(--text-primary);border-color:var(--border)}
+.app-shell .practice-bank-card h3,.app-shell .bank-card-title,.app-shell .bank-card b,.app-shell .panel h1,.app-shell .panel h2,.app-shell .panel h3,.app-shell .panel h4{color:var(--text-primary)}
+.app-shell .chat-sidebar{z-index:101}
+.app-shell .drawer-backdrop{z-index:100!important}
+.app-shell .chat-sidebar.drawer-open{z-index:101!important;padding-bottom:calc(24px + env(safe-area-inset-bottom))}
+.app-shell .chat-sidebar-footer{padding-bottom:calc(16px + env(safe-area-inset-bottom))}
+.app-shell .chat-theme-controls{display:none}
+.app-shell .theme-cycle-button{flex-shrink:0;min-width:34px;padding:6px 9px;font-size:17px}
+.app-shell .import-bank-toggle{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;min-width:0;text-align:left;border:1px solid var(--border);border-radius:12px;background:var(--bg-muted);color:var(--text-primary);padding:13px 15px;font-weight:800}
+@media(max-width:767px){
+ html,body,#root{overflow-x:hidden!important}
+ .app-shell{width:100%;max-width:100vw;overflow-x:clip}
+ .app-shell .main{padding:14px 12px calc(84px + env(safe-area-inset-bottom))}
+ .app-shell .mobile-bottom-nav{z-index:40;height:64px;bottom:0;padding-bottom:env(safe-area-inset-bottom)}
+ .app-shell .chat-app-shell{height:calc(100dvh - 64px - env(safe-area-inset-bottom));min-height:0!important;max-height:calc(100dvh - 64px - env(safe-area-inset-bottom));display:flex;flex-direction:column;overflow:hidden;padding-bottom:0!important}
+ .app-shell .chat-main-column{height:100%;min-height:0;display:flex;flex-direction:column;overflow:hidden}
+ .app-shell .chat-topbar{height:52px;min-height:52px;flex:0 0 52px;position:relative;z-index:12;padding:0 8px;gap:6px}
+ .app-shell .chat-topbar-left{flex:1 1 auto;min-width:0;gap:6px}
+ .app-shell .topbar-app-title{min-width:max-content}
+ .app-shell .chat-topbar .topbar-app-title strong{font-size:14px;white-space:nowrap}
+ .app-shell .chat-topbar-actions{flex:0 0 auto;display:flex;align-items:center;gap:4px;min-width:0}
+ .app-shell .chat-new-compact{font-size:0;padding:6px;min-width:32px;justify-content:center}
+ .app-shell .chat-new-compact svg{margin:0}
+ .app-shell .chat-workspace{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;overflow:hidden}
+ .app-shell .chat-feed{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:12px}
+ .app-shell .chat-composer-dock{position:sticky;bottom:0;z-index:30;flex:0 0 auto;background:var(--bg-card);border-top:1px solid var(--border);padding:10px 12px calc(10px + env(safe-area-inset-bottom))}
+ .app-shell .chat-composer-dock .chat-composer{margin:0;background:var(--bg-card);border-color:var(--border)}
+ .app-shell .chat-sidebar.drawer-open{position:fixed!important;inset:0 0 0 0!important;height:100dvh;max-height:100dvh;overflow-y:auto;padding-bottom:calc(24px + env(safe-area-inset-bottom));z-index:101!important}
+ .app-shell .drawer-backdrop{position:fixed!important;inset:0!important;z-index:100!important}
+ .app-shell .notes-panel textarea{min-height:48vh}
+ .app-shell .bank-card{overflow-wrap:anywhere}
+ .app-shell .bank-card .primary{white-space:normal}
+ .app-shell .chat-topbar .export-trigger{min-width:32px}
+}
