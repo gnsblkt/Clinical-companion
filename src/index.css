@@ -790,3 +790,14 @@ body{min-width:0}
  .app-shell .bank-card .primary{white-space:normal}
  .app-shell .chat-topbar .export-trigger{min-width:32px}
 }
+
+@media(max-width:767px){
+ .app-shell .chat-composer-dock{position:sticky;bottom:0;z-index:30;flex:0 0 auto;display:block;background:var(--bg-card);color:var(--text-primary);border-top:1px solid var(--border);padding:10px 12px calc(10px + env(safe-area-inset-bottom));margin:0}
+ .app-shell .composer-pill{display:flex;align-items:flex-end;gap:8px;min-width:0;background:var(--bg-muted);border:1px solid var(--border);border-radius:14px;padding:8px}
+ .app-shell .composer-pill textarea{flex:1 1 auto;min-width:0;max-height:144px;resize:none;background:transparent;color:var(--text-primary);border:0;outline:none;padding:8px;line-height:1.45}
+ .app-shell .composer-pill .send-button{flex:0 0 auto;min-height:38px;padding:8px 12px}
+ .app-shell .composer-disclaimer{margin:6px 2px 0;font-size:10px;line-height:1.35;color:var(--text-secondary)}
+}
+.app-shell .formatted-note,.app-shell .formatted-note *{color:var(--text-primary)}
+.app-shell .bank-form label{color:var(--text-primary)}
+.app-shell .bank-form input,.app-shell .bank-form select{background:var(--bg-muted)!important;color:var(--text-primary)!important;border-color:var(--border)!important}
