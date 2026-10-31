@@ -1,76 +1,78 @@
-# Clinical Companion AI— Open-source PWA
+# MedAtlas — Medical Learning PWA
 
-A responsive medical study workspace for clinical learning and postgraduate entrance exam revision. The project is MIT-licensed and its complete source is editable. It is an educational prototype, not a validated clinical decision-support system.
+MedAtlas is a Vite + React + TypeScript progressive web app for clinical learning and postgraduate entrance exam revision, including NEET-PG, INI-CET, MECEE-PG and USMLE-oriented study. The project is MIT-licensed.
 
-## Features
+> **Educational use only.** MedAtlas is an educational prototype, not a validated clinical decision-support system. Do not use it as a substitute for professional judgement, local protocols or current authoritative clinical guidance.
 
-- Responsive mobile, tablet and desktop UI; installable PWA with app-shell offline caching.
-- AI study chat with optional user-owned OpenAI, Google Gemini, OpenRouter and Groq API keys.
-- OpenRouter/Groq provider auto-detection from common key prefixes and model-list discovery from provider APIs.
-- CSV MCQ import and practice, flashcard creation, local notes, PDF/TXT/Markdown document text extraction.
-- Sample CSV download, light/dark theme and local browser storage for notes and MCQs.
-- GitHub Actions build workflow, Vercel configuration and MIT license.
+## Current features
 
-## Edit the app
+- MCQ banks with CSV import, practice, editing, image support and AI tutor explanations.
+- Flashcards, local notes and PDF/TXT/Markdown text extraction.
+- AI study chat with optional user-supplied provider keys for OpenAI, Gemini, OpenRouter and Groq.
+- Medical discovery using PubMed via NCBI E-utilities, Wikipedia and Wikimedia Commons.
+- Guideline discovery links for WHO, NICE, CDC, India MoHFW and Nepal DoHS.
+- Dark/light theme, responsive layout and installable PWA with app-shell caching.
+- Cloudinary image integration and Capacitor configuration.
 
-- Main application and feature logic: `src/App.tsx`
-- Styling and responsive UI: `src/index.css`
-- App entry point: `src/main.tsx`
-- PWA metadata: `public/manifest.webmanifest`
-- Offline shell caching: `public/sw.js`
-- Vercel build configuration: `vercel.json`
+Feature availability depends on network access, provider availability, user configuration and API limits.
 
-Edit these files directly in GitHub's web editor or clone the repository and edit locally. Commit/push changes to the connected branch to trigger the GitHub build workflow and, once Vercel is connected, automatic Vercel deployments.
+## Medical information and source limitations
 
-## Run locally
+The medical search feature is a discovery tool. Search snippets, article metadata and guideline portal links are not equivalent to a critical appraisal or a verified clinical recommendation. Always open and assess the original source, publication date, population, methods and limitations. Some search workflows may return metadata without an abstract. Do not infer missing evidence.
 
-Requires Node.js 20+.
+AI-generated explanations can be incomplete or incorrect. Verify important medical facts, drug doses and emergency recommendations against current authoritative sources and local protocols.
+
+## Privacy, API keys and browser storage
+
+- Study content is stored locally in the browser using browser storage; it is not automatically synchronized across devices.
+- Browser-local data is not an encrypted backup. Clearing site data or changing devices may cause loss.
+- The Groq key entered for the AI Tutor is held in React component memory and cleared on page reload. Older copies of the key in localStorage are removed when the app starts.
+- AI requests are sent directly from the browser to the selected provider. A key used in a browser request can be inspected by the browser user and should never be a shared, privileged or organization-wide secret.
+- A server-side proxy with authentication, rate limiting and secret storage is recommended before offering shared-key AI access to a public multi-user audience.
+- Configure Cloudinary with a narrowly restricted upload preset and appropriate file type, size and quota limits. Never ship an API secret in frontend code.
+
+## Requirements
+
+- Node.js 20 or newer.
+- npm.
+
+## Local development
 
 ```bash
 npm install
 npm run dev
 ```
 
-Production build:
+Available validation commands:
 
 ```bash
+npm run typecheck
+npm run lint
 npm run build
-npm run preview
 ```
 
-## Publish with GitHub + Vercel
+Preview a production build with `npm run preview`.
 
-1. Create a **public** GitHub repository named `Clinical Companion` under your account.
-2. Upload the contents of this folder to the repository root (not the containing folder). Include hidden files such as `.github/workflows/ci.yml` and `.gitignore`.
-3. In Vercel, choose **Add New → Project**, import that GitHub repository and authorize access if prompted.
-4. Confirm the framework is **Vite**, build command is `npm run build`, and output directory is `dist`; deploy.
-5. Future commits to the production branch will trigger a new deployment automatically when the Vercel Git connection is enabled.
+## Continuous integration
 
-Vercel and GitHub accounts must be authorized by the owner. This source bundle cannot grant access to accounts or create a repository on their behalf.
+GitHub Actions runs TypeScript checking, ESLint and a production Vite build for pushes to `main` and pull requests targeting `main`.
 
-## AI provider and API-key safety
+This repository currently has no committed npm lockfile. CI therefore uses `npm install`; reproducible, lockfile-based installs should be enabled after generating and committing `package-lock.json`.
 
-Keys are entered by the individual user and held in React component memory; they are not intentionally written to localStorage and clear on refresh. AI requests currently go directly from the browser to the provider. This is suitable only for a personal prototype using your own restricted key, not for embedding a shared key in a public app. Do not hard-code secrets in source code. For a shared public AI service, add a server-side proxy with rate limits, abuse controls and server-side secret storage. AI usage may incur charges; this project does not provide API credits.
+## Deploy with GitHub and Vercel
 
-## Offline and local data
+1. Import this repository into Vercel.
+2. Select Vite (or use the detected framework settings).
+3. Set the build command to `npm run build`.
+4. Set the output directory to `dist`.
+5. Deploy a preview first, then promote a verified release to production.
 
-The service worker caches the app shell and same-origin build assets as they are visited. The first visit requires internet; AI calls also require internet. Notes and MCQs stay in the current browser profile and do not sync between devices. Browser storage can be cleared by the user or browser.
+The Vercel configuration supports SPA route fallback. External medical search and AI services still require network access.
 
-## Clinical and document limitations
+## Capacitor
 
-- AI responses are not independently fact-checked and do not have guaranteed live citations. Verify clinical information against current, authoritative references and local protocols.
-- Do not use the app as a substitute for professional judgement, senior review or emergency care. Do not upload patient-identifiable information.
-- PDF extraction is text extraction, not OCR; scanned pages and complex layouts may not be captured correctly.
+The Capacitor configuration uses the local `dist` build and does not point the native app at a hosted preview URL. Before publishing a native app, confirm the permanent bundle identifier, app signing, privacy disclosures, permissions and store requirements.
 
-## CSV format
+## License
 
-```csv
-Question,Option1,Option2,Option3,Option4,Answer,Explanation
-"Which cells produce surfactant?","Type I pneumocytes","Type II pneumocytes","Macrophages","Club cells",B,"Type II pneumocytes produce pulmonary surfactant."
-```
-
-`Answer` accepts A/B/C/D or a zero-based numeric option index. Quote cells containing commas or line breaks.
-
-## Contributing and license
-
-Issues and pull requests are welcome. Never submit patient-identifiable information, API keys, secrets or content you do not have permission to redistribute. Licensed under MIT; see `LICENSE`.
+MIT. See [LICENSE](./LICENSE).

@@ -1,7 +1,7 @@
 {
-  "name": "Clinical Companion AI",
-  "short_name": "ClinicalAI",
-  "description": "A personal medical learning workspace for MCQs, notes, flashcards and AI-assisted study.",
+  "name": "MedAtlas — Medical Learning",
+  "short_name": "MedAtlas",
+  "description": "An educational workspace for clinical learning, postgraduate entrance exam revision, MCQs, notes and flashcards.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
