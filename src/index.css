@@ -848,3 +848,24 @@ body{min-width:0}
 .medatlas-pathway-steps summary{cursor:pointer;font-weight:700}
 .medatlas-pathway-action{margin-top:6px}
 @media(max-width:600px){.medatlas-evidence-form-row{grid-template-columns:1fr}.medatlas-evidence-tutor-head,.medatlas-versioned-pathway>header{flex-direction:column}.medatlas-evidence-actions{align-items:stretch}.medatlas-evidence-actions button{width:100%}.medatlas-used-sources article{grid-template-columns:1fr}.medatlas-used-sources small{grid-column:1}}
+
+/* AI configuration and evidence tutor: touch-first layout and safe scrolling */
+.settings-card{max-height:min(78dvh,720px);overflow-y:auto;overscroll-behavior:contain;scrollbar-gutter:stable}
+.settings-card .settings-button-row button{min-height:42px}
+.ai-settings-status,.medatlas-evidence-status{margin:10px 0;padding:10px 12px;border:1px solid #b7e2ca;border-radius:10px;background:#effaf3;color:#17633a;font-size:.85rem;line-height:1.5}
+.medatlas-ai-config-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.medatlas-ai-config-actions button{min-height:44px;min-width:0}
+.medatlas-ai-config-actions button[type="submit"]{grid-column:1/-1}
+.medatlas-evidence-session-note{display:block;color:#718096;font-size:.74rem;line-height:1.5}
+.medatlas-evidence-form label,.settings-card label{min-width:0}
+.medatlas-evidence-form input,.medatlas-evidence-form select,.medatlas-evidence-form textarea,.settings-card input,.settings-card select{max-width:100%;min-width:0}
+@media(max-width:600px){
+ .settings-card{max-height:calc(100dvh - 118px);padding:14px;margin-bottom:12px}
+ .settings-card .settings-button-row{display:grid;grid-template-columns:1fr}
+ .settings-card .settings-button-row button{width:100%;min-height:44px}
+ .medatlas-evidence-tutor{padding:14px;border-radius:14px}
+ .medatlas-evidence-form-row{grid-template-columns:minmax(0,1fr)}
+ .medatlas-ai-config-actions{grid-template-columns:1fr}
+ .medatlas-ai-config-actions button[type="submit"]{grid-column:auto}
+ .medatlas-evidence-answer table{font-size:.78rem}
+}
