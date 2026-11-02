@@ -869,3 +869,18 @@ body{min-width:0}
  .medatlas-ai-config-actions button[type="submit"]{grid-column:auto}
  .medatlas-evidence-answer table{font-size:.78rem}
 }
+
+/* Evidence-first product hierarchy: tutor is the primary result */
+.medatlas-primary-tutor{order:-1;margin-top:clamp(12px,2vw,22px)}
+.medatlas-primary-tutor .medatlas-evidence-tutor{border-color:#cbd8ef;box-shadow:0 14px 38px rgba(32,65,125,.09)}
+.medatlas-primary-tutor .medatlas-evidence-tutor-head{align-items:center}
+.medatlas-primary-tutor .medatlas-evidence-kicker{color:#315fc4}
+.medatlas-nav-primary{font-weight:800!important;color:#244fba!important;background:#edf3ff;border-color:#cbdafa}
+.medatlas-primary-tutor .medatlas-evidence-form>label:nth-of-type(2){margin-top:2px}
+.medatlas-primary-tutor .medatlas-evidence-form>label:nth-of-type(2) input{min-height:52px}
+.medatlas-primary-tutor .medatlas-evidence-answer{background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:18px;margin-top:18px}
+@media(max-width:600px){
+ .medatlas-primary-tutor{margin-left:-2px;margin-right:-2px}
+ .medatlas-primary-tutor .medatlas-evidence-answer{padding:12px}
+ .medatlas-primary-tutor .medatlas-evidence-tutor-head{gap:8px}
+}
