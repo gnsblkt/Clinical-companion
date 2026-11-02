@@ -3,12 +3,12 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import type { EvidenceSource } from "../api/evidenceSearch";
 
-type Provider = "groq" | "openai" | "openrouter";
+type Provider = "groq" | "openai" | "openrouter" | "gemini";
 
 const providerConfig: Record<Provider, { label: string; endpoint: string; model: string }> = {
   groq: { label: "Groq", endpoint: "https://api.groq.com/openai/v1/chat/completions", model: "llama-3.3-70b-versatile" },
   openai: { label: "OpenAI", endpoint: "https://api.openai.com/v1/chat/completions", model: "gpt-4o-mini" },
-  openrouter: { label: "OpenRouter", endpoint: "https://openrouter.ai/api/v1/chat/completions", model: "openai/gpt-4o-mini" },
+  openrouter: { label: "OpenRouter", endpoint: "https://openrouter.ai/api/v1/chat/completions", model: "openai/gpt-4o-mini" },\n  gemini: { label: "Gemini", endpoint: "https://generativelanguage.googleapis.com/v1beta/models/", model: "gemini-2.5-flash" },
 };
 
 type Props = { topic: string; sources: EvidenceSource[] };
@@ -59,22 +59,21 @@ export default function EvidenceTutor({ topic, sources }: Props) {
     ].join("\n");
 
     try {
-      const response = await fetch(providerConfig[provider].endpoint, {
+      const userPrompt = "Topic: " + topic + "\n\nQuestion: " + question + "\n\nRetrieved evidence (abstract/metadata only):\n" + sourceContext;
+      const isGemini = provider === "gemini";
+      const response = await fetch(isGemini
+        ? providerConfig.gemini.endpoint + encodeURIComponent(model.trim() || providerConfig.gemini.model) + ":generateContent?key=" + encodeURIComponent(apiKey.trim())
+        : providerConfig[provider].endpoint, {
         method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: "Bearer " + apiKey.trim(),
-          ...(provider === "openrouter" ? { "HTTP-Referer": window.location.origin, "X-Title": "MedAtlas" } : {}) },
-        body: JSON.stringify({
-          model: model.trim() || providerConfig[provider].model,
-          temperature: 0.2,
-          messages: [
-            { role: "system", content: system },
-            { role: "user", content: "Topic: " + topic + "\n\nQuestion: " + question + "\n\nRetrieved evidence (abstract/metadata only):\n" + sourceContext },
-          ],
-        }),
+        headers: { "Content-Type": "application/json", ...(!isGemini ? { Authorization: "Bearer " + apiKey.trim(),
+          ...(provider === "openrouter" ? { "HTTP-Referer": window.location.origin, "X-Title": "MedAtlas" } : {}) } : {}) },
+        body: JSON.stringify(isGemini
+          ? { systemInstruction: { parts: [{ text: system }] }, contents: [{ role: "user", parts: [{ text: userPrompt }] }], generationConfig: { temperature: 0.2 } }
+          : { model: model.trim() || providerConfig[provider].model, temperature: 0.2, messages: [{ role: "system", content: system }, { role: "user", content: userPrompt }] }),
       });
       const data = await response.json();
       if (!response.ok) throw new Error(data?.error?.message || "AI request failed (" + response.status + ").");
-      const content = data?.choices?.[0]?.message?.content;
+      const content = isGemini ? data?.candidates?.[0]?.content?.parts?.map((part: {text?: string}) => part.text || "").join("\n") : data?.choices?.[0]?.message?.content;
       if (typeof content !== "string" || !content.trim()) throw new Error("AI provider returned an empty answer.");
       setAnswer(content);
     } catch (err) {
@@ -92,7 +91,7 @@ export default function EvidenceTutor({ topic, sources }: Props) {
     <div className="medatlas-evidence-safety"><strong>Evidence boundary</strong> Abstracts and bibliographic metadata are supplied to the AI—not full-text papers or complete guideline documents. Citation links identify source records; independently verify that each cited source supports the specific claim.</div>
     <form onSubmit={ask} className="medatlas-evidence-form">
       <div className="medatlas-evidence-form-row">
-        <label>AI provider<select value={provider} onChange={(e) => changeProvider(e.target.value as Provider)}><option value="groq">Groq</option><option value="openai">OpenAI</option><option value="openrouter">OpenRouter</option></select></label>
+        <label>AI provider<select value={provider} onChange={(e) => changeProvider(e.target.value as Provider)}><option value="groq">Groq</option><option value="openai">OpenAI</option><option value="openrouter">OpenRouter</option><option value="gemini">Gemini</option></select></label>
         <label>Model<input value={model} onChange={(e) => setModel(e.target.value)} placeholder={providerConfig[provider].model}/></label>
       </div>
       <label>Your API key (session only)<input type="password" autoComplete="off" value={apiKey} onChange={(e) => setApiKey(e.target.value)} placeholder="Paste your own provider key" required/></label>
