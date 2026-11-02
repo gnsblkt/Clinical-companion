@@ -11,7 +11,7 @@ export default function EvidenceTutor({ topic, sources }: Props) {
   const [provider, setProvider] = useState<AIProvider>(initial.provider);
   const [apiKey, setApiKey] = useState(initial.apiKey);
   const [model, setModel] = useState(initial.model);
-  const [question, setQuestion] = useState("Explain this topic for postgraduate medical exam revision. Highlight mechanisms, important distinctions, limitations and exam pearls.");
+  const [question, setQuestion] = useState("Explain the topic using the retrieved evidence. Summarise the strongest findings, clinical or educational implications, important uncertainties, and postgraduate exam pearls. Do not invent guideline recommendations.");
   const [answer, setAnswer] = useState("");
   const [loading, setLoading] = useState(false);
   const [testing, setTesting] = useState(false);
@@ -89,7 +89,7 @@ export default function EvidenceTutor({ topic, sources }: Props) {
       const content = await generateAIText(config(), system, userPrompt, 2200);
       setAnswer(content);
       saveAIConfig(config());
-      setStatus("Answer generated from " + sources.length + " retrieved PubMed records.");
+      setStatus("Answer generated using " + sources.length + " retrieved PubMed records (abstracts/metadata only).");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Could not reach the selected AI provider.");
     } finally {
@@ -99,7 +99,7 @@ export default function EvidenceTutor({ topic, sources }: Props) {
 
   return <section className="medatlas-evidence-tutor" id="evidence-tutor">
     <div className="medatlas-evidence-tutor-head">
-      <div><span className="medatlas-evidence-kicker">EVIDENCE-GROUNDED TUTOR</span><h3>Ask MedAtlas about the evidence</h3><p>AI synthesis from the abstracts and metadata retrieved in this search.</p></div>
+      <div><span className="medatlas-evidence-kicker">MEDATLAS · EVIDENCE-FIRST AI</span><h3>Ask a medical question. Get a cited answer.</h3><p>The tutor comes first. Retrieved biomedical literature and guideline records below let you inspect the evidence behind its answer.</p></div>
       <span className="medatlas-evidence-count">{sources.length} sources</span>
     </div>
     <div className="medatlas-evidence-safety"><strong>Evidence boundary</strong> Abstracts and bibliographic metadata are supplied to the AI—not full-text papers or complete guideline documents. Citation links identify source records; independently verify that each cited source supports the specific claim.</div>
@@ -113,18 +113,18 @@ export default function EvidenceTutor({ topic, sources }: Props) {
       <div className="medatlas-evidence-actions medatlas-ai-config-actions">
         <button type="button" className="medatlas-ai-secondary" onClick={saveSettings} disabled={!apiKey.trim()}>Save AI settings</button>
         <button type="button" className="medatlas-ai-secondary" onClick={testConnection} disabled={!apiKey.trim() || testing}>{testing ? "Testing…" : "Test connection"}</button>
-        <button type="submit" disabled={loading || !apiKey.trim() || !sources.length}>{loading ? "Synthesizing evidence…" : "Generate evidence-aware answer"}</button>
+        <button type="submit" disabled={loading || !apiKey.trim() || !sources.length}>{loading ? "Synthesizing evidence…" : "Generate cited answer"}</button>
       </div>
       <span className="medatlas-evidence-session-note">API key is kept in browser session storage, not synced or saved to the MedAtlas account. Never use a shared/public device for personal API credentials.</span>
     </form>
     {error && <div className="medatlas-evidence-error" role="alert">{error}</div>}
     {status && <div className="medatlas-evidence-status" role="status">{status}</div>}
     {answer && <div className="medatlas-evidence-answer">
-      <div className="medatlas-evidence-answer-head"><strong>Educational synthesis</strong><span>AI-generated claim review · not independently verified</span><span>Not clinical advice or decision support</span></div>
+      <div className="medatlas-evidence-answer-head"><strong>Evidence-linked educational answer</strong><span>AI appraisal · verify against original sources</span><span>Not clinical advice or decision support</span></div>
       {invalidCitationIds.length > 0 && <div className="medatlas-evidence-error" role="alert"><strong>Unverified citation markers:</strong> {invalidCitationIds.join(", ")}. These IDs do not match the retrieved PubMed sources and must not be treated as valid references.</div>}
       <ReactMarkdown remarkPlugins={[remarkGfm]} components={{a: ({href, children, ...props}) => <a href={href} target="_blank" rel="noreferrer" {...props}>{children}</a>}}>{renderedAnswer}</ReactMarkdown>
       <details className="medatlas-how-built"><summary>How this answer was built</summary><ol><li>PubMed was searched for the topic.</li><li>The selected provider received these retrieved abstracts and metadata.</li><li>The model generated an educational synthesis and was instructed to cite supplied source IDs.</li><li>The claim-level table is an AI assessment of the supplied abstracts—not independent source verification, full-text appraisal, or clinical validation. Check cited articles directly.</li></ol><p>Retrieved: {sources.length} PubMed records. Provider: {provider}. Model: {model || AI_PROVIDERS[provider].model}.</p></details>
-      <div className="medatlas-used-sources"><h4>Retrieved sources available to this answer</h4>{sources.map((source) => <article key={source.id}><b>[{source.id}]</b> <a href={source.url} target="_blank" rel="noreferrer">{source.title}</a><small>{source.journal} · {source.publishedAt} · {source.authors}</small></article>)}</div>
+      <div className="medatlas-used-sources"><h4>Biomedical literature supplied to the tutor</h4>{sources.map((source) => <article key={source.id}><b>[{source.id}]</b> <a href={source.url} target="_blank" rel="noreferrer">{source.title}</a><small>{source.journal} · {source.publishedAt} · {source.authors}</small></article>)}</div>
     </div>}
     <p className="medatlas-evidence-footnote">Educational use only. Do not use AI-generated content to diagnose, prescribe, triage, or make patient-care decisions. Confirm important facts in current official guidelines and primary literature.</p>
   </section>;
