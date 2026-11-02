@@ -278,7 +278,7 @@ export default function MedicalSearch() {
 
       {!loading && activeQuery && <>
         <section className="medsearch-section medatlas-primary-tutor" id="evidence-ai">
-          <EvidenceTutor topic={activeQuery} sources={evidenceSources}/>
+          <EvidenceTutor topic={activeQuery} sources={evidenceSources} searching={loading} retrievalError={sourceErrors.includes("PubMed abstract retrieval") ? "Both NCBI PubMed and the Europe PMC fallback failed to return abstracts. Check your network or try again." : ""}/>
         </section>
         <section className="medsearch-section" id="guidelines">
           <div className="medsearch-section-title"><span className="medsearch-icon amber"><Landmark size={19}/></span><div><h3>Guidelines and recommendations</h3><p>Official source portals plus PubMed-indexed guideline records</p></div><span className="medsearch-count">{guidelines.length} records</span></div>
