@@ -1,116 +1,151 @@
-import React, { useMemo, useState, type FormEvent } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import type { EvidenceSource } from "../api/evidenceSearch";
+import { AI_PROVIDERS, generateAIText, readAIConfig, saveAIConfig, testAIConnection, type AIProvider } from "../api/aiProvider";
 
-type Provider = "groq" | "openai" | "openrouter" | "gemini";
+type Props = { topic: string; sources: EvidenceSource[]; searching?: boolean; retrievalError?: string };
 
-const providerConfig: Record<Provider, { label: string; endpoint: string; model: string }> = {
-  groq: { label: "Groq", endpoint: "https://api.groq.com/openai/v1/chat/completions", model: "llama-3.3-70b-versatile" },
-  openai: { label: "OpenAI", endpoint: "https://api.openai.com/v1/chat/completions", model: "gpt-4o-mini" },
-  openrouter: { label: "OpenRouter", endpoint: "https://openrouter.ai/api/v1/chat/completions", model: "openai/gpt-4o-mini" },
-  gemini: { label: "Gemini", endpoint: "https://generativelanguage.googleapis.com/v1beta/models/", model: "gemini-2.5-flash" },
-};
-
-type Props = { topic: string; sources: EvidenceSource[] };
-
-export default function EvidenceTutor({ topic, sources }: Props) {
-  const [provider, setProvider] = useState<Provider>("groq");
-  const [apiKey, setApiKey] = useState("");
-  const [model, setModel] = useState(providerConfig.groq.model);
-  const [question, setQuestion] = useState("Explain this topic for postgraduate medical exam revision. Highlight mechanisms, important distinctions, limitations and exam pearls.");
+export default function EvidenceTutor({ topic, sources, searching = false, retrievalError = "" }: Props) {
+  const initial = readAIConfig();
+  const [provider, setProvider] = useState<AIProvider>(initial.provider);
+  const [apiKey, setApiKey] = useState(initial.apiKey);
+  const [model, setModel] = useState(initial.model);
   const [answer, setAnswer] = useState("");
   const [loading, setLoading] = useState(false);
+  const [testing, setTesting] = useState(false);
   const [error, setError] = useState("");
+  const [status, setStatus] = useState("");
+  const requestKey = useRef("");
 
-  const sourceMap = useMemo(() => new Map(sources.map((source) => [source.id, source])), [sources]);
-  const citationIds = useMemo(() => Array.from(answer.matchAll(/\\[(S\\d+)\\]/g)).map((match) => match[1]), [answer]);
+  const sourceMap = useMemo(() => new Map(sources.map((source, index) => [source.id, { source, number: index + 1 }])), [sources]);
+  const citationIds = useMemo(() => Array.from(answer.matchAll(/\[(S\d+)\]/g)).map((match) => match[1]), [answer]);
   const invalidCitationIds = useMemo(() => Array.from(new Set(citationIds.filter((id) => !sourceMap.has(id)))), [citationIds, sourceMap]);
-  const renderedAnswer = useMemo(() => answer.replace(/\\[(S\\d+)\\]/g, (match, id: string) => {
-    const source = sourceMap.get(id);
-    return source ? "[" + id + "](" + source.url + ")" : "**[Unverified citation: " + id + "]**";
+  const renderedAnswer = useMemo(() => answer.replace(/\[(S\d+)\]/g, (match, id: string) => {
+    const entry = sourceMap.get(id);
+    return entry ? "[" + entry.number + "](#" + encodeURIComponent("medatlas-source-" + entry.number) + ")" : "**[Unverified citation: " + id + "]**";
   }), [answer, sourceMap]);
 
-  function changeProvider(next: Provider) {
-    setProvider(next);
-    setModel(providerConfig[next].model);
+  function config() {
+    return { provider, apiKey: apiKey.trim(), model: model.trim() || AI_PROVIDERS[provider].model };
   }
 
-  async function ask(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    if (!apiKey.trim() || !question.trim() || loading) return;
-    if (!sources.length) {
-      setError("Search PubMed first so the tutor has retrieved evidence to work from.");
+  function changeProvider(next: AIProvider) {
+    setProvider(next);
+    setModel(AI_PROVIDERS[next].model);
+    setStatus("");
+  }
+
+  function saveSettings() {
+    try {
+      saveAIConfig(config());
+      setStatus("AI settings saved for this browser session.");
+      setError("");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Could not save AI settings.");
+    }
+  }
+
+  async function testConnection() {
+    if (!apiKey.trim() || testing) return;
+    setTesting(true); setError(""); setStatus("");
+    try {
+      await testAIConnection(config());
+      saveAIConfig(config());
+      setStatus("AI connection successful. Settings saved for this browser session.");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Connection test failed.");
+    } finally {
+      setTesting(false);
+    }
+  }
+
+  useEffect(() => {
+    if (searching || !sources.length) return;
+    if (!apiKey.trim()) {
+      setStatus("Add an AI provider key in AI settings to generate your cited answer automatically.");
       return;
     }
-    setLoading(true);
-    setError("");
-    setAnswer("");
-    const sourceContext = sources.map((source) =>
-      "[" + source.id + "] PMID " + source.id.slice(1) + "\nTitle: " + source.title +
-      "\nAuthors: " + source.authors + "\nJournal/date: " + source.journal + " · " + source.publishedAt +
-      "\nAbstract: " + source.abstract + "\nURL: " + source.url
-    ).join("\n\n");
-
-    const system = [
-      "You are MedAtlas, a medical education tutor. This is educational synthesis, never clinical decision support.",
-      "Use only the supplied retrieved PubMed metadata and abstracts for claims presented as source-supported. General explanations may be included but label them as background knowledge and state that they are not independently source-verified.",
-      "Do not invent references, publication details, study findings, guidelines, or citations. Cite relevant supplied sources inline using exactly their IDs such as [S1]. Do not cite a source unless its supplied content supports the sentence.",
-      "If evidence is absent, contradictory, outdated, abstract-only, or insufficient, say so plainly. Do not pretend you reviewed full text or a guideline if only an abstract or link is supplied.",
-      "Return Markdown with headings: Educational disclaimer; Short answer; Structured explanation; Claim-level evidence review; Exam / learning pearls; Uncertainty and limitations; Sources used.",
-      "In Claim-level evidence review, make a compact table with columns: Claim (brief); cited source ID(s); evidence support (Supported by abstract / Partial / Not found in supplied abstract / Conflicting / Unable to assess); reason and limitations. Evaluate only claims made in the answer that materially affect medical understanding. Cite the supplied abstract content, not merely its title. If abstract text does not directly support a claim, say Not found in supplied abstract. Do not call this independent verification.",
-      "Add publication year/date for cited sources where available and flag older evidence when relevance may have changed. Separate primary studies, reviews/meta-analyses, and guideline documents when source type can be determined from supplied metadata. Do not label a PubMed abstract as a guideline unless the record clearly identifies it as one.",
-      "Include an educational-only disclaimer and encourage verification against current official guidance. Avoid patient-specific diagnosis, orders, or treatment recommendations.",
-    ].join("\n");
-
-    try {
-      const userPrompt = "Topic: " + topic + "\n\nQuestion: " + question + "\n\nRetrieved evidence (abstract/metadata only):\n" + sourceContext;
-      const isGemini = provider === "gemini";
-      const response = await fetch(isGemini
-        ? providerConfig.gemini.endpoint + encodeURIComponent(model.trim() || providerConfig.gemini.model) + ":generateContent?key=" + encodeURIComponent(apiKey.trim())
-        : providerConfig[provider].endpoint, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", ...(!isGemini ? { Authorization: "Bearer " + apiKey.trim(),
-          ...(provider === "openrouter" ? { "HTTP-Referer": window.location.origin, "X-Title": "MedAtlas" } : {}) } : {}) },
-        body: JSON.stringify(isGemini
-          ? { systemInstruction: { parts: [{ text: system }] }, contents: [{ role: "user", parts: [{ text: userPrompt }] }], generationConfig: { temperature: 0.2 } }
-          : { model: model.trim() || providerConfig[provider].model, temperature: 0.2, messages: [{ role: "system", content: system }, { role: "user", content: userPrompt }] }),
-      });
-      const data = await response.json();
-      if (!response.ok) throw new Error(data?.error?.message || "AI request failed (" + response.status + ").");
-      const content = isGemini ? data?.candidates?.[0]?.content?.parts?.map((part: {text?: string}) => part.text || "").join("\n") : data?.choices?.[0]?.message?.content;
-      if (typeof content !== "string" || !content.trim()) throw new Error("AI provider returned an empty answer.");
-      setAnswer(content);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Could not reach the selected AI provider.");
-    } finally {
-      setLoading(false);
-    }
-  }
+    const signature = topic + "|" + provider + "|" + model + "|" + sources.map((source) => source.id).join(",");
+    if (requestKey.current === signature) return;
+    requestKey.current = signature;
+    let cancelled = false;
+    const run = async () => {
+      setLoading(true); setError(""); setStatus("Evidence retrieved. Generating your cited answer…"); setAnswer("");
+      const sourceContext = sources.map((source) =>
+        "[" + source.id + "] PMID " + source.id.replace(/^S/, "") +
+        "\nTitle: " + source.title +
+        "\nAuthors: " + source.authors +
+        "\nJournal/date: " + source.journal + " · " + source.publishedAt +
+        "\nAbstract: " + source.abstract +
+        "\nURL: " + source.url
+      ).join("\n\n");
+      const system = [
+        "You are MedAtlas, an evidence-grounded medical education tutor. This is educational synthesis, never clinical decision support.",
+        "Answer the user's actual question directly and immediately. Use the supplied retrieved records as the primary evidence base. Do not make the user search again or ask them to press a second generate button.",
+        "Use only supplied abstracts/metadata for claims described as supported by retrieved research. You may add established background explanation, but clearly label it as background when it is not directly supported by the supplied abstracts.",
+        "Cite every material evidence-based claim inline using only supplied source IDs exactly as [S1], [S2], etc. Cite only when the supplied abstract supports that claim. Never invent a citation, source, PMID, finding, guideline, date, effect size or recommendation.",
+        "Write concise, well-structured Markdown: (1) Short answer, (2) Explanation / mechanism, (3) What the evidence says, (4) Important limitations or conflicting evidence, (5) Key takeaways. Adapt headings to the question and omit irrelevant sections.",
+        "Distinguish randomized trials, observational studies, systematic reviews and guidelines only when the supplied metadata establishes the design/type. Do not call a PubMed abstract a guideline unless it clearly identifies itself as one.",
+        "Do not claim to have read full text. The model receives abstracts and bibliographic metadata only. State when evidence is insufficient, indirect, conflicting, old or abstract-only. Do not overstate causality from observational evidence.",
+        "For clinical topics, explain concepts and evidence rather than giving patient-specific diagnosis, prescriptions, dosing or treatment orders. Direct readers to current official guidelines for clinical decisions.",
+        "Avoid a generic claim-evidence table. Prioritize a readable answer with citations immediately beside the claims they support."
+      ].join("\n");
+      try {
+        const prompt = "Medical question: " + topic + "\n\nRetrieved PubMed evidence (abstracts and metadata only):\n" + sourceContext;
+        const result = await generateAIText(config(), system, prompt, 2200);
+        if (cancelled) return;
+        setAnswer(result);
+        saveAIConfig(config());
+        setStatus("Answer generated from " + sources.length + " retrieved records. Review the numbered sources below.");
+      } catch (err) {
+        if (!cancelled) {
+          setError(err instanceof Error ? err.message : "Could not generate the cited answer.");
+          setStatus("");
+          requestKey.current = "";
+        }
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    };
+    void run();
+    return () => { cancelled = true; };
+  }, [topic, sources, searching, apiKey, provider, model]);
 
   return <section className="medatlas-evidence-tutor" id="evidence-tutor">
     <div className="medatlas-evidence-tutor-head">
-      <div><span className="medatlas-evidence-kicker">EVIDENCE-GROUNDED TUTOR</span><h3>Ask MedAtlas about the evidence</h3><p>AI synthesis from the abstracts and metadata retrieved in this search.</p></div>
+      <div><span className="medatlas-evidence-kicker">MEDATLAS · EVIDENCE-BASED ANSWER</span><h3>{topic}</h3><p>Automatic answer synthesis from retrieved biomedical evidence, with numbered citations you can inspect.</p></div>
       <span className="medatlas-evidence-count">{sources.length} sources</span>
     </div>
-    <div className="medatlas-evidence-safety"><strong>Evidence boundary</strong> Abstracts and bibliographic metadata are supplied to the AI—not full-text papers or complete guideline documents. Citation links identify source records; independently verify that each cited source supports the specific claim.</div>
-    <form onSubmit={ask} className="medatlas-evidence-form">
-      <div className="medatlas-evidence-form-row">
-        <label>AI provider<select value={provider} onChange={(e) => changeProvider(e.target.value as Provider)}><option value="groq">Groq</option><option value="openai">OpenAI</option><option value="openrouter">OpenRouter</option><option value="gemini">Gemini</option></select></label>
-        <label>Model<input value={model} onChange={(e) => setModel(e.target.value)} placeholder={providerConfig[provider].model}/></label>
-      </div>
-      <label>Your API key (session only)<input type="password" autoComplete="off" value={apiKey} onChange={(e) => setApiKey(e.target.value)} placeholder="Paste your own provider key" required/></label>
-      <label>Question<textarea value={question} onChange={(e) => setQuestion(e.target.value)} rows={3} maxLength={4000} required/></label>
-      <div className="medatlas-evidence-actions"><button type="submit" disabled={loading || !apiKey.trim() || !sources.length}>{loading ? "Synthesizing evidence…" : "Generate evidence-aware answer"}</button><span>Key remains in component memory and is not saved to localStorage.</span></div>
-    </form>
-    {error && <div className="medatlas-evidence-error" role="alert">{error}</div>}
-    {answer && <div className="medatlas-evidence-answer">
-      <div className="medatlas-evidence-answer-head"><strong>Educational synthesis</strong><span>AI-generated claim review · not independently verified</span><span>Not clinical advice or decision support</span></div>
-      {invalidCitationIds.length > 0 && <div className="medatlas-evidence-error" role="alert"><strong>Unverified citation markers:</strong> {invalidCitationIds.join(", ")}. These IDs do not match the retrieved PubMed sources and must not be treated as valid references.</div>}
-      <ReactMarkdown remarkPlugins={[remarkGfm]} components={{a: ({href, children, ...props}) => <a href={href} target="_blank" rel="noreferrer" {...props}>{children}</a>}}>{renderedAnswer}</ReactMarkdown>
-      <details className="medatlas-how-built"><summary>How this answer was built</summary><ol><li>PubMed was searched for the topic.</li><li>The selected provider received these retrieved abstracts and metadata.</li><li>The model generated an educational synthesis and was instructed to cite supplied source IDs.</li><li>The claim-level table is an AI assessment of the supplied abstracts—not independent source verification, full-text appraisal, or clinical validation. Check cited articles directly.</li></ol><p>Retrieved: {sources.length} PubMed records. Provider: {provider}. Model: {model || providerConfig[provider].model}.</p></details>
-      <div className="medatlas-used-sources"><h4>Retrieved sources available to this answer</h4>{sources.map((source) => <article key={source.id}><b>[{source.id}]</b> <a href={source.url} target="_blank" rel="noreferrer">{source.title}</a><small>{source.journal} · {source.publishedAt} · {source.authors}</small></article>)}</div>
+    <div className="medatlas-evidence-safety"><strong>Evidence boundary</strong> The AI receives bibliographic metadata and abstracts, not necessarily full-text papers. Citations link to original records; verify important claims in the source and current official guidance.</div>
+    {searching && <div className="medatlas-evidence-status" role="status">Retrieving relevant PubMed abstracts…</div>}
+    {!searching && !sources.length && <div className="medatlas-evidence-error" role="status"><strong>Evidence retrieval needs attention.</strong> {retrievalError || "No matching abstracts were returned."} Try refining the question or retrying. MedAtlas uses Europe PMC as a fallback when NCBI retrieval is unavailable.</div>}
+    {sources.length > 0 && <div className="medatlas-evidence-answer">
+      <div className="medatlas-evidence-answer-head"><strong>{loading ? "Generating evidence-based answer…" : answer ? "Evidence-linked answer" : "Answer generation"}</strong><span>Educational synthesis · not clinical decision support</span></div>
+      {loading && <div className="medatlas-evidence-status" role="status">Reading {sources.length} retrieved abstracts and preparing a cited explanation…</div>}
+      {answer && <>
+        {invalidCitationIds.length > 0 && <div className="medatlas-evidence-error" role="alert"><strong>Unverified citation markers:</strong> {invalidCitationIds.join(", ")}. These references were not among the retrieved sources.</div>}
+        <ReactMarkdown remarkPlugins={[remarkGfm]} components={{a: ({href, children, ...props}) => <a href={href} {...props}>{children}</a>}}>{renderedAnswer}</ReactMarkdown>
+        <div className="medatlas-used-sources"><h4>References · open original sources</h4><ol>{sources.map((source, index) => <li id={"medatlas-source-" + (index + 1)} key={source.id}><a href={source.url} target="_blank" rel="noreferrer">{source.title}</a><small>{source.authors} · {source.journal} · {source.publishedAt} · PMID {source.id.replace(/^S/, "")}</small></li>)}</ol></div>
+      </>}
     </div>}
-    <p className="medatlas-evidence-footnote">Educational use only. Do not use AI-generated content to diagnose, prescribe, triage, or make patient-care decisions. Confirm important facts in current official guidelines and primary literature.</p>
+    {error && <div className="medatlas-evidence-error" role="alert">{error}</div>}
+    {status && <div className="medatlas-evidence-status" role="status">{status}</div>}
+    <details className="medatlas-ai-settings">
+      <summary>AI settings · {AI_PROVIDERS[provider].label}</summary>
+      <div className="medatlas-evidence-form">
+        <div className="medatlas-evidence-form-row">
+          <label>AI provider<select value={provider} onChange={(e) => changeProvider(e.target.value as AIProvider)}>{(Object.keys(AI_PROVIDERS) as AIProvider[]).map((key) => <option key={key} value={key}>{AI_PROVIDERS[key].label}</option>)}</select></label>
+          <label>Model<select value={model} onChange={(e) => setModel(e.target.value)}>{AI_PROVIDERS[provider].models.map((item) => <option key={item} value={item}>{item}</option>)}</select></label>
+        </div>
+        <label>Provider API key<input type="password" autoComplete="off" value={apiKey} onChange={(e) => { setApiKey(e.target.value); setStatus(""); }} placeholder="Paste your provider API key"/></label>
+        <div className="medatlas-evidence-actions medatlas-ai-config-actions">
+          <button type="button" className="medatlas-ai-secondary" onClick={saveSettings} disabled={!apiKey.trim()}>Save settings</button>
+          <button type="button" className="medatlas-ai-secondary" onClick={testConnection} disabled={!apiKey.trim() || testing}>{testing ? "Testing…" : "Test connection"}</button>
+        </div>
+        <span className="medatlas-evidence-session-note">Your API key stays in this browser session. For a public production product, a secure server-side AI gateway is recommended instead of exposing user keys in browser requests.</span>
+      </div>
+    </details>
+    <p className="medatlas-evidence-footnote">For medical education only. This synthesis is not a diagnosis or treatment recommendation. Check current official guidelines and the original publications before applying evidence.</p>
   </section>;
 }

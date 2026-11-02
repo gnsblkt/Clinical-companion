@@ -848,3 +848,45 @@ body{min-width:0}
 .medatlas-pathway-steps summary{cursor:pointer;font-weight:700}
 .medatlas-pathway-action{margin-top:6px}
 @media(max-width:600px){.medatlas-evidence-form-row{grid-template-columns:1fr}.medatlas-evidence-tutor-head,.medatlas-versioned-pathway>header{flex-direction:column}.medatlas-evidence-actions{align-items:stretch}.medatlas-evidence-actions button{width:100%}.medatlas-used-sources article{grid-template-columns:1fr}.medatlas-used-sources small{grid-column:1}}
+
+/* AI configuration and evidence tutor: touch-first layout and safe scrolling */
+.settings-card{max-height:min(78dvh,720px);overflow-y:auto;overscroll-behavior:contain;scrollbar-gutter:stable}
+.settings-card .settings-button-row button{min-height:42px}
+.ai-settings-status,.medatlas-evidence-status{margin:10px 0;padding:10px 12px;border:1px solid #b7e2ca;border-radius:10px;background:#effaf3;color:#17633a;font-size:.85rem;line-height:1.5}
+.medatlas-ai-config-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.medatlas-ai-config-actions button{min-height:44px;min-width:0}
+.medatlas-ai-config-actions button[type="submit"]{grid-column:1/-1}
+.medatlas-evidence-session-note{display:block;color:#718096;font-size:.74rem;line-height:1.5}
+.medatlas-evidence-form label,.settings-card label{min-width:0}
+.medatlas-evidence-form input,.medatlas-evidence-form select,.medatlas-evidence-form textarea,.settings-card input,.settings-card select{max-width:100%;min-width:0}
+@media(max-width:600px){
+ .settings-card{max-height:calc(100dvh - 118px);padding:14px;margin-bottom:12px}
+ .settings-card .settings-button-row{display:grid;grid-template-columns:1fr}
+ .settings-card .settings-button-row button{width:100%;min-height:44px}
+ .medatlas-evidence-tutor{padding:14px;border-radius:14px}
+ .medatlas-evidence-form-row{grid-template-columns:minmax(0,1fr)}
+ .medatlas-ai-config-actions{grid-template-columns:1fr}
+ .medatlas-ai-config-actions button[type="submit"]{grid-column:auto}
+ .medatlas-evidence-answer table{font-size:.78rem}
+}
+
+/* Evidence-first product hierarchy: tutor is the primary result */
+.medatlas-primary-tutor{order:-1;margin-top:clamp(12px,2vw,22px)}
+.medatlas-primary-tutor .medatlas-evidence-tutor{border-color:#cbd8ef;box-shadow:0 14px 38px rgba(32,65,125,.09)}
+.medatlas-primary-tutor .medatlas-evidence-tutor-head{align-items:center}
+.medatlas-primary-tutor .medatlas-evidence-kicker{color:#315fc4}
+.medatlas-nav-primary{font-weight:800!important;color:#244fba!important;background:#edf3ff;border-color:#cbdafa}
+.medatlas-primary-tutor .medatlas-evidence-form>label:nth-of-type(2){margin-top:2px}
+.medatlas-primary-tutor .medatlas-evidence-form>label:nth-of-type(2) input{min-height:52px}
+.medatlas-primary-tutor .medatlas-evidence-answer{background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:18px;margin-top:18px}
+@media(max-width:600px){
+ .medatlas-primary-tutor{margin-left:-2px;margin-right:-2px}
+ .medatlas-primary-tutor .medatlas-evidence-answer{padding:12px}
+ .medatlas-primary-tutor .medatlas-evidence-tutor-head{gap:8px}
+}
+
+/* Clear retrieval states for the evidence-first tutor */
+.medatlas-evidence-status,.medatlas-evidence-error{overflow-wrap:anywhere}
+.medatlas-evidence-status{border:1px solid #c8d9f5;background:#f2f7ff;color:#234b86;border-radius:12px;padding:12px 14px;line-height:1.55}
+.medatlas-evidence-error{border:1px solid #f0d2b8;background:#fff8f1;color:#80431c;border-radius:12px;padding:12px 14px;line-height:1.55}
+@media(max-width:600px){.medatlas-evidence-status,.medatlas-evidence-error{font-size:.88rem;padding:11px 12px}}
