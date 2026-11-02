@@ -235,7 +235,7 @@ export default function MedicalSearch() {
     if (results[3].status === "fulfilled") setImages(results[3].value);
     else { setImages([]); failures.push("Wikimedia Commons"); }
     setSourceErrors(failures);
-    if (failures.length === 4) setError("All sources failed to respond. Check your connection and try again.");
+    if (failures.length === 5) setError("All sources failed to respond. Check your connection and try again.");
     setLoading(false);
   }
 
