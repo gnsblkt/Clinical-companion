@@ -4,9 +4,9 @@ import remarkGfm from "remark-gfm";
 import type { EvidenceSource } from "../api/evidenceSearch";
 import { AI_PROVIDERS, generateAIText, readAIConfig, saveAIConfig, testAIConnection, type AIProvider } from "../api/aiProvider";
 
-type Props = { topic: string; sources: EvidenceSource[] };
+type Props = { topic: string; sources: EvidenceSource[]; searching?: boolean; retrievalError?: string };
 
-export default function EvidenceTutor({ topic, sources }: Props) {
+export default function EvidenceTutor({ topic, sources, searching = false, retrievalError = "" }: Props) {
   const initial = readAIConfig();
   const [provider, setProvider] = useState<AIProvider>(initial.provider);
   const [apiKey, setApiKey] = useState(initial.apiKey);
@@ -103,7 +103,8 @@ export default function EvidenceTutor({ topic, sources }: Props) {
       <span className="medatlas-evidence-count">{sources.length} sources</span>
     </div>
     <div className="medatlas-evidence-safety"><strong>Evidence boundary</strong> Abstracts and bibliographic metadata are supplied to the AI—not full-text papers or complete guideline documents. Citation links identify source records; independently verify that each cited source supports the specific claim.</div>
-    {!sources.length && <div className="medatlas-evidence-error" role="status">No evidence records are currently available to the tutor. Run a PubMed search first. If this persists, check whether PubMed abstract retrieval is blocked by your network.</div>}
+    {searching && !sources.length && <div className="medatlas-evidence-status" role="status">Searching PubMed and retrieving abstracts… The tutor will become available as soon as evidence records are ready.</div>}
+    {!searching && !sources.length && <div className="medatlas-evidence-error" role="status"><strong>Evidence retrieval needs attention.</strong> {retrievalError || "No matching PubMed abstracts were returned."} Try a broader search or submit the search again. MedAtlas also retries abstract retrieval through Europe PMC when NCBI access is unavailable.</div>}
     <form onSubmit={ask} className="medatlas-evidence-form">
       <div className="medatlas-evidence-form-row">
         <label>AI provider<select value={provider} onChange={(e) => changeProvider(e.target.value as AIProvider)}>{(Object.keys(AI_PROVIDERS) as AIProvider[]).map((key) => <option key={key} value={key}>{AI_PROVIDERS[key].label}</option>)}</select></label>
@@ -113,7 +114,7 @@ export default function EvidenceTutor({ topic, sources }: Props) {
       <div className="medatlas-evidence-actions medatlas-ai-config-actions">
         <button type="button" className="medatlas-ai-secondary" onClick={saveSettings} disabled={!apiKey.trim()}>Save AI settings</button>
         <button type="button" className="medatlas-ai-secondary" onClick={testConnection} disabled={!apiKey.trim() || testing}>{testing ? "Testing…" : "Test connection"}</button>
-        <button type="submit" disabled={loading || !apiKey.trim() || !sources.length}>{loading ? "Synthesizing evidence…" : "Generate cited answer"}</button>
+        <button type="submit" disabled={loading || searching || !apiKey.trim() || !sources.length}>{loading ? "Synthesizing evidence…" : "Generate cited answer"}</button>
       </div>
       <span className="medatlas-evidence-session-note">API key is kept in browser session storage, not synced or saved to the MedAtlas account. Never use a shared/public device for personal API credentials.</span>
     </form>
