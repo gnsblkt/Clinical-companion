@@ -224,7 +224,7 @@ export default function MedicalSearch() {
     event.preventDefault();
     const term = query.trim();
     if (!term || loading) return;
-    setLoading(true); setError(""); setSourceErrors([]); setActiveQuery(term);
+    setLoading(true); setError(""); setSourceErrors([]); setEvidenceSources([]); setActiveQuery(term);
     const results = await Promise.allSettled([getPubMed(term), getPubMed(term + " AND (guideline[Publication Type] OR practice guideline[Publication Type])"), getWikipedia(term), getCommons(term), searchPubMedEvidence(term, 8)]);
     const failures: string[] = [];
     if (results[0].status === "fulfilled") setArticles(results[0].value);
@@ -235,6 +235,8 @@ export default function MedicalSearch() {
     else { setWiki([]); failures.push("Wikipedia"); }
     if (results[3].status === "fulfilled") setImages(results[3].value);
     else { setImages([]); failures.push("Wikimedia Commons"); }
+    if (results[4].status === "fulfilled") setEvidenceSources(results[4].value);
+    else { setEvidenceSources([]); failures.push("PubMed abstract retrieval"); }
     setSourceErrors(failures);
     if (failures.length === 5) setError("All sources failed to respond. Check your connection and try again.");
     setLoading(false);
