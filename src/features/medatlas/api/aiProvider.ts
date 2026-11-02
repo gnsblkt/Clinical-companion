@@ -73,7 +73,14 @@ export async function generateAIText(config: AIConfig, system: string, prompt: s
       },
       body: JSON.stringify(gemini
         ? { systemInstruction: { parts: [{ text: system }] }, contents: [{ role: "user", parts: [{ text: prompt }] }], generationConfig: { temperature: 0.2, maxOutputTokens: maxTokens } }
-        : { model, temperature: 0.2, max_tokens: maxTokens, messages: [{ role: "system", content: system }, { role: "user", content: prompt }] }),
+        : {
+            model,
+            temperature: 0.2,
+            ...(config.provider === "groq" && model.startsWith("openai/gpt-oss-")
+              ? { max_completion_tokens: Math.max(maxTokens, 4096), include_reasoning: false, reasoning_effort: "medium" }
+              : { max_tokens: maxTokens }),
+            messages: [{ role: "system", content: system }, { role: "user", content: prompt }],
+          }),
     });
   } catch {
     throw new Error("Could not reach the AI provider. Check your internet connection and try again.");
@@ -86,10 +93,21 @@ export async function generateAIText(config: AIConfig, system: string, prompt: s
     if (response.status === 429) throw new Error("Provider rate limit or quota reached. Wait or check your account usage.");
     throw new Error(detail || AI_PROVIDERS[config.provider].label + " request failed (" + response.status + ").");
   }
+  const message = data?.choices?.[0]?.message;
   const content = gemini
     ? data?.candidates?.[0]?.content?.parts?.map((part: { text?: string }) => part.text || "").join("\n")
-    : data?.choices?.[0]?.message?.content;
-  if (typeof content !== "string" || !content.trim()) throw new Error("The AI provider returned an empty answer. Check model availability and provider response.");
+    : typeof message?.content === "string"
+      ? message.content
+      : Array.isArray(message?.content)
+        ? message.content.map((part: { text?: string }) => part?.text || "").join("\n")
+        : "";
+  if (typeof content !== "string" || !content.trim()) {
+    const finishReason = data?.choices?.[0]?.finish_reason || "not provided";
+    const refusal = message?.refusal;
+    throw new Error(refusal
+      ? "The AI provider declined this request: " + String(refusal)
+      : "The AI provider returned no visible answer text (finish reason: " + finishReason + "). Try a different supported model or reduce the question length.");
+  }
   return content.trim();
 }
 
