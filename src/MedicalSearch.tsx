@@ -1,4 +1,8 @@
 import React, { useState, type FormEvent } from "react";
+import EvidenceTutor from "./features/medatlas/components/EvidenceTutor";
+import VersionedPathway from "./features/medatlas/components/VersionedPathway";
+import { searchPubMedEvidence, type EvidenceSource } from "./features/medatlas/api/evidenceSearch";
+import { getPathwayForTopic } from "./features/medatlas/data/pathways";
 import { Activity, ArrowLeft, BookOpen, ExternalLink, Image as ImageIcon, Search, ShieldCheck, GitBranch, Layers, Landmark, Brain, ClipboardList } from "lucide-react";
 
 type Article = { id: string; title: string; journal?: string; date?: string; url: string; abstract?: string };
@@ -195,7 +199,7 @@ export default function MedicalSearch() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [sourceErrors, setSourceErrors] = useState<string[]>([]);
-  const [articles, setArticles] = useState<Article[]>([]);
+  const [articles, setArticles] = useState<Article[]>([]);\n  const [evidenceSources, setEvidenceSources] = useState<EvidenceSource[]>([]);
   const [guidelines, setGuidelines] = useState<Article[]>([]);
   const [wiki, setWiki] = useState<WikiItem[]>([]);
   const [images, setImages] = useState<ImageItem[]>([]);
@@ -220,7 +224,7 @@ export default function MedicalSearch() {
     const term = query.trim();
     if (!term || loading) return;
     setLoading(true); setError(""); setSourceErrors([]); setActiveQuery(term);
-    const results = await Promise.allSettled([getPubMed(term), getPubMed(term + " AND (guideline[Publication Type] OR practice guideline[Publication Type])"), getWikipedia(term), getCommons(term)]);
+    const results = await Promise.allSettled([getPubMed(term), getPubMed(term + " AND (guideline[Publication Type] OR practice guideline[Publication Type])"), getWikipedia(term), getCommons(term), searchPubMedEvidence(term, 8)]);
     const failures: string[] = [];
     if (results[0].status === "fulfilled") setArticles(results[0].value);
     else { setArticles([]); failures.push("PubMed"); }
@@ -281,6 +285,10 @@ export default function MedicalSearch() {
           {articles.length ? <div className="medsearch-article-list">{articles.map((article) => <article className="medsearch-article" key={article.id}><div className="medsearch-article-meta">{article.journal}{article.date ? " · " + article.date : ""}</div><h4><a href={article.url} target="_blank" rel="noreferrer">{article.title}<ExternalLink size={14}/></a></h4><p>Open the PubMed record to review the abstract, indexing details, publication information, and links to full text where available.</p><a className="medsearch-source-link" href={article.url} target="_blank" rel="noreferrer">View PubMed record ↗</a></article>)}</div> : <p className="medsearch-empty">No PubMed records found for this query.</p>}
         </section>
 
+        <section className="medsearch-section" id="evidence-ai">
+          <EvidenceTutor topic={activeQuery} sources={evidenceSources}/>
+        </section>
+        {getPathwayForTopic(activeQuery) && <VersionedPathway pathway={getPathwayForTopic(activeQuery)!} onGenerateCards={(cards) => setFlashcards((current) => [...current, ...cards])}/>}
         <section className="medsearch-section">
           <div className="medsearch-section-title"><span className="medsearch-icon violet"><BookOpen size={19}/></span><div><h3>Topic overview</h3><p>Wikipedia · tertiary orientation only</p></div><span className="medsearch-count">{wiki.length} results</span></div>
           {wiki.length ? <div className="medsearch-wiki-grid">{wiki.map((item) => <article className="medsearch-wiki-card" key={item.title}><h4><a href={item.url} target="_blank" rel="noreferrer">{item.title}<ExternalLink size={13}/></a></h4><p>{item.extract || "Open the article for a general topic overview."}</p><a className="medsearch-source-link" href={item.url} target="_blank" rel="noreferrer">Read article ↗</a></article>)}</div> : <p className="medsearch-empty">No topic pages found for this query.</p>}
