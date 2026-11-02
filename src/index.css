@@ -801,3 +801,50 @@ body{min-width:0}
 .app-shell .formatted-note,.app-shell .formatted-note *{color:var(--text-primary)}
 .app-shell .bank-form label{color:var(--text-primary)}
 .app-shell .bank-form input,.app-shell .bank-form select{background:var(--bg-muted)!important;color:var(--text-primary)!important;border-color:var(--border)!important}
+
+/* MedAtlas evidence tutor + versioned pathway workspace */
+.medatlas-evidence-tutor,.medatlas-versioned-pathway{border:1px solid #dce5f2;background:linear-gradient(180deg,#fff,#f9fbff);border-radius:18px;padding:clamp(16px,3vw,26px);color:#1b2540;box-shadow:0 8px 28px rgba(30,55,100,.045)}
+.medatlas-evidence-tutor-head,.medatlas-versioned-pathway>header{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:18px}
+.medatlas-evidence-tutor h3,.medatlas-versioned-pathway h3{margin:5px 0;font:700 1.25rem Manrope,system-ui,sans-serif;color:#17243d}
+.medatlas-evidence-tutor-head p,.medatlas-versioned-pathway header p{margin:5px 0;color:#64748b;font-size:.9rem}
+.medatlas-evidence-kicker{font-size:.68rem;font-weight:800;letter-spacing:.12em;color:#4774c7}
+.medatlas-evidence-count,.medatlas-review-badge{white-space:nowrap;border-radius:999px;padding:6px 10px;background:#edf3ff;color:#315ba9;font-size:.72rem;font-weight:700}
+.medatlas-review-badge{background:#fff3dc;color:#875b16}.medatlas-review-badge.reviewed{background:#e7f7ef;color:#20744c}
+.medatlas-evidence-safety{padding:12px 14px;border:1px solid #f0dfb8;border-radius:12px;background:#fff9ec;color:#71551f;font-size:.83rem;line-height:1.55;margin:12px 0 18px}
+.medatlas-evidence-safety strong{display:block;margin-bottom:3px}
+.medatlas-evidence-form{display:grid;gap:12px}
+.medatlas-evidence-form label{display:grid;gap:6px;font-size:.82rem;font-weight:700;color:#4b5870}
+.medatlas-evidence-form input,.medatlas-evidence-form textarea,.medatlas-evidence-form select{width:100%;border:1px solid #d8e0ec;border-radius:10px;background:#fff;color:#17243d;padding:10px 12px;min-width:0;font:inherit;font-size:.9rem}
+.medatlas-evidence-form textarea{resize:vertical;line-height:1.5}
+.medatlas-evidence-form-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px}
+.medatlas-evidence-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.medatlas-evidence-actions button,.medatlas-pathway-action{border:0;border-radius:10px;background:#315fc4;color:white;padding:11px 16px;font-weight:700}
+.medatlas-evidence-actions button:disabled{opacity:.55;cursor:not-allowed}
+.medatlas-evidence-actions span,.medatlas-evidence-footnote{font-size:.75rem;color:#718096;line-height:1.5}
+.medatlas-evidence-error{margin:12px 0;border-radius:10px;padding:10px 12px;background:#fff0f0;color:#9d3030}
+.medatlas-evidence-answer{margin-top:20px;padding-top:18px;border-top:1px solid #e2e8f0;line-height:1.7;overflow-wrap:anywhere}
+.medatlas-evidence-answer-head{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.medatlas-evidence-answer-head span{font-size:.72rem;color:#8b5d21}
+.medatlas-evidence-answer h2,.medatlas-evidence-answer h3,.medatlas-evidence-answer h4{color:#1b2e4d;margin:1.2em 0 .5em}
+.medatlas-evidence-answer a,.medatlas-used-sources a{color:#315fc4;text-decoration:underline;text-underline-offset:2px}
+.medatlas-evidence-answer table{display:block;max-width:100%;overflow:auto;border-collapse:collapse}
+.medatlas-evidence-answer th,.medatlas-evidence-answer td{border:1px solid #dce3ed;padding:8px;text-align:left}
+.medatlas-how-built{border:1px solid #dce5f2;border-radius:11px;padding:12px 14px;margin:18px 0;background:#f6f9ff}
+.medatlas-how-built summary{cursor:pointer;font-weight:700;color:#294a85}
+.medatlas-used-sources{display:grid;gap:10px;margin:16px 0}
+.medatlas-used-sources h4{margin:0;color:#243854}
+.medatlas-used-sources article{display:grid;grid-template-columns:auto 1fr;gap:4px 9px;border:1px solid #e3e9f2;border-radius:10px;padding:10px;background:#fff;font-size:.85rem}
+.medatlas-used-sources small{grid-column:2;color:#758198;font-size:.72rem}
+.medatlas-evidence-footnote{margin:16px 0 0}
+.medatlas-versioned-pathway{margin:18px 0}
+.medatlas-pathway-meta{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:.76rem;color:#6d7b92;margin-bottom:12px}
+.medatlas-pathway-steps{display:grid;gap:12px;margin:18px 0}
+.medatlas-pathway-steps article{display:grid;grid-template-columns:38px minmax(0,1fr);gap:12px;padding:15px;border:1px solid #e0e8f2;border-radius:13px;background:#fff}
+.medatlas-pathway-step-number{display:grid;place-items:center;width:34px;height:34px;border-radius:10px;background:#eaf0ff;color:#315fc4;font-weight:800}
+.medatlas-pathway-steps h4{margin:0 0 5px;color:#20324d}
+.medatlas-pathway-steps p{margin:4px 0 8px;color:#52627a;line-height:1.5}
+.medatlas-pathway-steps ul{margin:8px 0;padding-left:20px;color:#5b6b80;font-size:.88rem}
+.medatlas-pathway-steps details{margin-top:10px;color:#315fc4}
+.medatlas-pathway-steps summary{cursor:pointer;font-weight:700}
+.medatlas-pathway-action{margin-top:6px}
+@media(max-width:600px){.medatlas-evidence-form-row{grid-template-columns:1fr}.medatlas-evidence-tutor-head,.medatlas-versioned-pathway>header{flex-direction:column}.medatlas-evidence-actions{align-items:stretch}.medatlas-evidence-actions button{width:100%}.medatlas-used-sources article{grid-template-columns:1fr}.medatlas-used-sources small{grid-column:1}}
