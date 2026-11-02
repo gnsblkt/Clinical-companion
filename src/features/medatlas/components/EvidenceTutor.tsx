@@ -24,9 +24,11 @@ export default function EvidenceTutor({ topic, sources }: Props) {
   const [error, setError] = useState("");
 
   const sourceMap = useMemo(() => new Map(sources.map((source) => [source.id, source])), [sources]);
-  const renderedAnswer = useMemo(() => answer.replace(/\[(S\d+)\]/g, (match, id: string) => {
+  const citationIds = useMemo(() => Array.from(answer.matchAll(/\\[(S\\d+)\\]/g)).map((match) => match[1]), [answer]);
+  const invalidCitationIds = useMemo(() => Array.from(new Set(citationIds.filter((id) => !sourceMap.has(id)))), [citationIds, sourceMap]);
+  const renderedAnswer = useMemo(() => answer.replace(/\\[(S\\d+)\\]/g, (match, id: string) => {
     const source = sourceMap.get(id);
-    return source ? "[" + id + "](" + source.url + ")" : match;
+    return source ? "[" + id + "](" + source.url + ")" : "**[Unverified citation: " + id + "]**";
   }), [answer, sourceMap]);
 
   function changeProvider(next: Provider) {
