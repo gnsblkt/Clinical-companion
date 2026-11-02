@@ -884,3 +884,9 @@ body{min-width:0}
  .medatlas-primary-tutor .medatlas-evidence-answer{padding:12px}
  .medatlas-primary-tutor .medatlas-evidence-tutor-head{gap:8px}
 }
+
+/* Clear retrieval states for the evidence-first tutor */
+.medatlas-evidence-status,.medatlas-evidence-error{overflow-wrap:anywhere}
+.medatlas-evidence-status{border:1px solid #c8d9f5;background:#f2f7ff;color:#234b86;border-radius:12px;padding:12px 14px;line-height:1.55}
+.medatlas-evidence-error{border:1px solid #f0d2b8;background:#fff8f1;color:#80431c;border-radius:12px;padding:12px 14px;line-height:1.55}
+@media(max-width:600px){.medatlas-evidence-status,.medatlas-evidence-error{font-size:.88rem;padding:11px 12px}}
