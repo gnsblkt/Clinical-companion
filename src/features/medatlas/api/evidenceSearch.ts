@@ -50,7 +50,7 @@ export async function searchPubMedEvidence(query: string, maxResults = 8): Promi
     const searchUrl = new URL(EUTILS + "esearch.fcgi");
     searchUrl.search = new URLSearchParams({
       db: "pubmed", term, retmax: String(limit), retmode: "json", sort: "relevance",
-      tool: "MedAtlas", email: "support@medatlas.app",
+      
     }).toString();
     const searchResponse = await fetch(searchUrl.toString(), { signal: AbortSignal.timeout(15000) });
     if (!searchResponse.ok) throw new Error("PubMed search returned HTTP " + searchResponse.status + ".");
@@ -60,7 +60,7 @@ export async function searchPubMedEvidence(query: string, maxResults = 8): Promi
       const fetchUrl = new URL(EUTILS + "efetch.fcgi");
       fetchUrl.search = new URLSearchParams({
         db: "pubmed", id: ids.join(","), retmode: "xml",
-        tool: "MedAtlas", email: "support@medatlas.app",
+        
       }).toString();
       const fetchResponse = await fetch(fetchUrl.toString(), { signal: AbortSignal.timeout(18000) });
       if (!fetchResponse.ok) throw new Error("PubMed abstract retrieval returned HTTP " + fetchResponse.status + ".");
