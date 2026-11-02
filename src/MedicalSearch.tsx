@@ -269,6 +269,7 @@ export default function MedicalSearch() {
       {loading && <div className="medsearch-loading"><span className="medsearch-spinner"/><p>Searching biomedical literature and reference sources…</p></div>}
 
       {activeQuery && !loading && <nav className="medatlas-workspace-nav" aria-label="Topic workspace sections">
+        <a className="medatlas-nav-primary" href="#evidence-ai"><Brain size={15}/> AI Tutor</a>
         <a href="#guidelines"><Landmark size={15}/> Guidelines</a>
         <a href="#literature"><BookOpen size={15}/> Research</a>
         <a href="#visuals"><ImageIcon size={15}/> Images</a>
@@ -276,6 +277,9 @@ export default function MedicalSearch() {
       </nav>}
 
       {!loading && activeQuery && <>
+        <section className="medsearch-section medatlas-primary-tutor" id="evidence-ai">
+          <EvidenceTutor topic={activeQuery} sources={evidenceSources}/>
+        </section>
         <section className="medsearch-section" id="guidelines">
           <div className="medsearch-section-title"><span className="medsearch-icon amber"><Landmark size={19}/></span><div><h3>Guidelines and recommendations</h3><p>Official source portals plus PubMed-indexed guideline records</p></div><span className="medsearch-count">{guidelines.length} records</span></div>
           <p className="medsearch-source-note">These are discovery links, not an endorsement of every result. Confirm the issuing organization, intended population, jurisdiction, publication/update date, and whether the guidance is still current.</p>
@@ -288,10 +292,7 @@ export default function MedicalSearch() {
           {articles.length ? <div className="medsearch-article-list">{articles.map((article) => <article className="medsearch-article" key={article.id}><div className="medsearch-article-meta">{article.journal}{article.date ? " · " + article.date : ""}</div><h4><a href={article.url} target="_blank" rel="noreferrer">{article.title}<ExternalLink size={14}/></a></h4><p>Open the PubMed record to review the abstract, indexing details, publication information, and links to full text where available.</p><a className="medsearch-source-link" href={article.url} target="_blank" rel="noreferrer">View PubMed record ↗</a></article>)}</div> : <p className="medsearch-empty">No PubMed records found for this query.</p>}
         </section>
 
-        <section className="medsearch-section" id="evidence-ai">
-          <EvidenceTutor topic={activeQuery} sources={evidenceSources}/>
-        </section>
-        {getPathwayForTopic(activeQuery) && <VersionedPathway pathway={getPathwayForTopic(activeQuery)!} onGenerateCards={(cards) => setFlashcards((current) => [...current, ...cards])}/>}
+                {getPathwayForTopic(activeQuery) && <VersionedPathway pathway={getPathwayForTopic(activeQuery)!} onGenerateCards={(cards) => setFlashcards((current) => [...current, ...cards])}/>}
         <section className="medsearch-section">
           <div className="medsearch-section-title"><span className="medsearch-icon violet"><BookOpen size={19}/></span><div><h3>Topic overview</h3><p>Wikipedia · tertiary orientation only</p></div><span className="medsearch-count">{wiki.length} results</span></div>
           {wiki.length ? <div className="medsearch-wiki-grid">{wiki.map((item) => <article className="medsearch-wiki-card" key={item.title}><h4><a href={item.url} target="_blank" rel="noreferrer">{item.title}<ExternalLink size={13}/></a></h4><p>{item.extract || "Open the article for a general topic overview."}</p><a className="medsearch-source-link" href={item.url} target="_blank" rel="noreferrer">Read article ↗</a></article>)}</div> : <p className="medsearch-empty">No topic pages found for this query.</p>}
