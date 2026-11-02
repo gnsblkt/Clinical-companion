@@ -8,7 +8,8 @@ type Provider = "groq" | "openai" | "openrouter" | "gemini";
 const providerConfig: Record<Provider, { label: string; endpoint: string; model: string }> = {
   groq: { label: "Groq", endpoint: "https://api.groq.com/openai/v1/chat/completions", model: "llama-3.3-70b-versatile" },
   openai: { label: "OpenAI", endpoint: "https://api.openai.com/v1/chat/completions", model: "gpt-4o-mini" },
-  openrouter: { label: "OpenRouter", endpoint: "https://openrouter.ai/api/v1/chat/completions", model: "openai/gpt-4o-mini" },\n  gemini: { label: "Gemini", endpoint: "https://generativelanguage.googleapis.com/v1beta/models/", model: "gemini-2.5-flash" },
+  openrouter: { label: "OpenRouter", endpoint: "https://openrouter.ai/api/v1/chat/completions", model: "openai/gpt-4o-mini" },
+  gemini: { label: "Gemini", endpoint: "https://generativelanguage.googleapis.com/v1beta/models/", model: "gemini-2.5-flash" },
 };
 
 type Props = { topic: string; sources: EvidenceSource[] };
