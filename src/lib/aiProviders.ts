@@ -2,6 +2,17 @@ export type AIProvider = "auto"|"openai"|"groq"|"openrouter"|"gemini"|"anthropic
 export type AIMessage={role:"system"|"user"|"assistant";content:string};
 export const PROVIDER_STORAGE_KEY="clinical-ai-provider";
 export const BASE_URL_STORAGE_KEY="clinical-ai-base-url";
+export const FALLBACK_MODELS:Record<Exclude<AIProvider,"auto">,string[]> = {
+ openai:["gpt-4.1","gpt-4.1-mini","gpt-4.1-nano","gpt-4o","gpt-4o-mini","o3","o3-mini","o4-mini"],
+ groq:["llama-3.3-70b-versatile","llama-3.1-8b-instant","openai/gpt-oss-120b","openai/gpt-oss-20b","qwen/qwen3-32b"],
+ openrouter:["openai/gpt-4.1","openai/gpt-4o-mini","anthropic/claude-sonnet-4","google/gemini-2.5-flash","deepseek/deepseek-chat","meta-llama/llama-3.3-70b-instruct"],
+ gemini:["gemini-2.5-pro","gemini-2.5-flash","gemini-2.5-flash-lite","gemini-2.0-flash"],
+ anthropic:["claude-sonnet-4-5","claude-sonnet-4","claude-haiku-4-5","claude-opus-4-1"],
+ deepseek:["deepseek-chat","deepseek-reasoner"],
+ mistral:["mistral-large-latest","mistral-small-latest","codestral-latest"],
+ custom:["gpt-4o-mini"]
+};
+export function fallbackModels(provider:AIProvider,key=""):string[]{const p=provider==="auto"?detectProvider(key):provider;return p==="auto"?[]:FALLBACK_MODELS[p];}
 export function detectProvider(key:string):AIProvider{
  const k=key.trim(); if(k.startsWith("gsk_"))return "groq";if(k.startsWith("sk-or-"))return "openrouter";if(k.startsWith("AIza"))return "gemini";if(k.startsWith("sk-ant-"))return "anthropic";if(k.startsWith("sk-"))return "openai";return "openai";
 }
