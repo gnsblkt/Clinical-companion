@@ -1,4 +1,4 @@
-export type AIProvider = "auto"|"openai"|"groq"|"openrouter"|"gemini"|"anthropic"|"deepseek"|"mistral"|"custom";
+export type AIProvider = "auto"|"openai"|"groq"|"openrouter"|"gemini"|"anthropic"|"deepseek"|"mistral"|"deepinfra"|"custom";
 export type AIMessage={role:"system"|"user"|"assistant";content:string};
 export const PROVIDER_STORAGE_KEY="clinical-ai-provider";
 export const BASE_URL_STORAGE_KEY="clinical-ai-base-url";
@@ -10,6 +10,7 @@ export const FALLBACK_MODELS:Record<Exclude<AIProvider,"auto">,string[]> = {
  anthropic:["claude-sonnet-4-5","claude-sonnet-4","claude-haiku-4-5","claude-opus-4-1"],
  deepseek:["deepseek-chat","deepseek-reasoner"],
  mistral:["mistral-large-latest","mistral-small-latest","codestral-latest"],
+ deepinfra:["deepseek-ai/DeepSeek-V4-Flash-0731","meta-llama/Meta-Llama-3.3-70B-Instruct","Qwen/Qwen3-Next-80B-A3B-Instruct","mistralai/Mistral-Small-3.1-24B-Instruct-2503","deepseek-ai/DeepSeek-R1"],
  custom:["gpt-4o-mini"]
 };
 export function fallbackModels(provider:AIProvider,key=""):string[]{const p=provider==="auto"?detectProvider(key):provider;return p==="auto"?[]:FALLBACK_MODELS[p];}
@@ -19,7 +20,7 @@ export function detectProvider(key:string):AIProvider{
 export function currentProvider():AIProvider{const p=(localStorage.getItem(PROVIDER_STORAGE_KEY)||"auto") as AIProvider;return p==="auto"?detectProvider(localStorage.getItem("clinical-ai-key")||""):p;}
 export function providerBase(p:AIProvider):string{
  if(p==="custom")return (localStorage.getItem(BASE_URL_STORAGE_KEY)||"").trim().replace(/\/$/,"");
- if(p==="openai")return "https://api.openai.com/v1";if(p==="groq")return "https://api.groq.com/openai/v1";if(p==="openrouter")return "https://openrouter.ai/api/v1";if(p==="deepseek")return "https://api.deepseek.com/v1";if(p==="mistral")return "https://api.mistral.ai/v1";return "";
+ if(p==="openai")return "https://api.openai.com/v1";if(p==="groq")return "https://api.groq.com/openai/v1";if(p==="openrouter")return "https://openrouter.ai/api/v1";if(p==="deepseek")return "https://api.deepseek.com/v1";if(p==="mistral")return "https://api.mistral.ai/v1";if(p==="deepinfra")return "https://api.deepinfra.com/v1/openai";return "";
 }
 export async function chatCompletion(provider:AIProvider,key:string,model:string,messages:AIMessage[],temperature=0.3,maxTokens=1200):Promise<string>{
  const p=provider==="auto"?detectProvider(key):provider;
