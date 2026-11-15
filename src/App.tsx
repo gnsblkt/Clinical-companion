@@ -59,7 +59,9 @@ function parseCSV(text: string): Question[] {
   }
   return count;
  };
- const delimiter = delimiters.map(value => ({value,count:countDelimiter(firstLine,value)})).sort((a,b)=>b.count-a.count)[0];
+ const knownHeaders = new Set(["question","questiontext","questionstem","stem","prompt","problem","mcq","questionbody","questionid","qid","subjecttopic","subject","topic","optiona","optionb","optionc","optiond","option1","option2","option3","option4","choicea","choiceb","choicec","choiced","correctanswer","correctoption","answer","answerkey","key","explanation","conciseexplanation","rationale","highyieldpearl","mnemonic","reference"]);
+ const splitHeader = (line:string,sep:string) => { const parts:string[]=[];let value="",inQuotes=false;for(let i=0;i<line.length;i++){const c=line[i];if(c==='"'&&inQuotes&&line[i+1]==='"'){value+='"';i++;}else if(c==='"')inQuotes=!inQuotes;else if(c===sep&&!inQuotes){parts.push(value.trim());value="";}else value+=c;}parts.push(value.trim());return parts; };
+ const delimiter = delimiters.map(value => {const parts=splitHeader(firstLine,value);const recognized=parts.filter(part=>knownHeaders.has(part.toLowerCase().replace(/^\\uFEFF/,"").replace(/[^a-z0-9]/g,""))).length;return {value,count:countDelimiter(firstLine,value),recognized};}).sort((a,b)=>b.recognized-a.recognized||b.count-a.count)[0];
  if (!delimiter || delimiter.count < 2) throw new Error("Could not detect the file delimiter. Use a header row with at least a question and two option columns.");
  const separator = delimiter.value;
  const rows: string[][] = [];
@@ -143,7 +145,7 @@ function parseCSV(text: string): Question[] {
   });
  });
  if (!output.length) throw new Error("No valid MCQs found. "+(errors.slice(0,5).join("; ")||"Check the detected question, options and answer columns."));
- if (errors.length) console.warn("Clinical Companion CSV import skipped invalid rows:",errors);
+ if (errors.length) throw new Error("Import stopped to prevent losing or mis-keying questions. "+errors.length+" row(s) need correction: "+errors.slice(0,8).join("; ")+(errors.length>8?" …":""));
  return output;
 }
 
